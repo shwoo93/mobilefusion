@@ -5,14 +5,28 @@
 int main(int argc, char **argv)
 {
     mobilefusion::Kinect kinect;
+
     kinect.init();
 
     cv::Mat rgb, depth;
+
     while(true)
     {
         std::cout << "Capture image" << std::endl;
         kinect.captureImage(rgb, depth);
-        cv::imshow("rgb", rgb);
+        cv::namedWindow("depth");
+        cv::namedWindow("rgb");
+
+        //if(depth.empty())
+        //    std::cout<<"depth empty"<<endl;
+        //if(rgb.empty())
+        //    std::cout<<"rgb empty"<<endl;
+        if(!depth.empty())
+        {
+            cv::imshow("depth",depth);
+            cv::imshow("rgb",rgb);
+        }
+        cv::waitKey(1);
     }
 
     return 0;
