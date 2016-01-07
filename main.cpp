@@ -4,7 +4,7 @@
 
 int main(int argc, char **argv)
 {
-    mobilefusion::Kinect kinect;
+    mobilefusion::Kinect kinect(true, true, 0.5f, 4.5f);
 
     kinect.init();
 
@@ -17,10 +17,6 @@ int main(int argc, char **argv)
         cv::namedWindow("depth");
         cv::namedWindow("rgb");
 
-        //if(depth.empty())
-        //    std::cout<<"depth empty"<<endl;
-        //if(rgb.empty())
-        //    std::cout<<"rgb empty"<<endl;
         if(!depth.empty())
         {
             cv::imshow("depth",depth);
