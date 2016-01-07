@@ -2,7 +2,7 @@
 
 namespace mobilefusion {
 namespace util3d {
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloudFromDepth(
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloudFromRgbd(
             const cv::Mat &rgb,
             const cv::Mat &depth,
             float cx, float cy,
