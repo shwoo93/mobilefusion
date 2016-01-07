@@ -1,6 +1,9 @@
 #include "Kinect.h"
-#include <list>
-#include <vector>
+#include "util3d.h"
+#include "util3d_registration.h"
+
+//#include <list>
+//#include <vector>
 
 int main(int argc, char **argv)
 {

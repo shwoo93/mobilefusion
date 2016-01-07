@@ -2,6 +2,11 @@
 
 #include <pcl/registration/gicp.h>
 #include <pcl/registration/transforms.h>
+#include <pcl/pcl_macros.h>
+#include <pcl/filters/filter.h>
+#include <pcl/filters/extract_indices.h>
+#include <pcl/filters/voxel_grid.h>
+
 
 namespace mobilefusion {
 namespace util3d {
@@ -14,8 +19,27 @@ namespace util3d {
     }
 
     Eigen::Matrix4f transformationIcp(
-            pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr &cloud_source,
-            pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr &cloud_target) {
+            pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud_source,
+            pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud_target) {
+
+        pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_sourceDownsampled(new pcl::PointCloud<pcl::PointXYZRGB>);
+        pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_targetDownsampled(new pcl::PointCloud<pcl::PointXYZRGB>);
+
+
+        std::vector<int> indices;
+        pcl::removeNaNFromPointCloud(*cloud_source, *cloud_source, indices);
+        pcl::removeNaNFromPointCloud(*cloud_target, *cloud_target, indices);
+
+        pcl::VoxelGrid<pcl::PointXYZRGB> filter;
+        filter.setInputCloud(cloud_source);
+        filter.setLeafSize(0.01f, 0.01f, 0.01f);
+        filter.filter(*cloud_sourceDownsampled);
+
+        filter.setInputCloud(cloud_target);
+        filter.setLeafSize(0.01f, 0.01f, 0.01f);
+        filter.filter(*cloud_targetDownsampled);
+
+
         pcl::GeneralizedIterativeClosestPoint<pcl::PointXYZRGB, pcl::PointXYZRGB> gicp;
 
         gicp.setInputTarget(cloud_target);
