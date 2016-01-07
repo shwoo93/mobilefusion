@@ -28,6 +28,21 @@
 class Transform;
 
 namespace mobilefusion {
+
+   // class Transform {
+   //     public:
+   //         Transform();
+   //         Transform(float r11, float r12, float r13, float o14,
+   //                   float r21, float r22, float r23, float o24,
+   //                   float r31, float r32, float r33, float o34);
+   //         bool isNull() const;
+   //         bool isIdentity() const;
+   //         Eigen::Matrix4f toEigen4f() const;
+   //         Transform fromEigen4f(const Eigen::Matrix4f & matrix);
+   //     private:
+   //         cv::Mat data_;
+   // };
+
     class Kinect : public CameraInterface {
         public:
             Kinect();
@@ -55,24 +70,24 @@ namespace mobilefusion {
                             float cx, float cy,
                             float fx, float fy);
             pcl::PointCloud<pcl::PointXYZRGB>::Ptr removeNaNFromPointCloud(
-                            const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud);
+                            pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr &cloud);
             pcl::PointCloud<pcl::PointXYZRGB>::Ptr voxelize(
-                            const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud,
+                            pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr &cloud,
                             float voxelSize);
-            pcl::PointCloud<pcl::PointXYZRGB>::Ptr transformPointCloud(
-                            const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud,
-                            const Transform & transform);
-            pcl::PointCloud<pcl::PointXYZRGB>::Ptr getICPReadyCloud(
-                            const cv::Mat &rgb,
-                            const cv::Mat &depth,
-                            const float fx,
-                            const float fy,
-                            const float cx,
-                            const float cy,
-                            int decimation,
-                            float voxel,
-                            const Transform & transform);
-            Transform GetTransMat(
+           // pcl::PointCloud<pcl::PointXYZRGB>::Ptr transformPointCloud(
+           //                 const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud,
+           //                 const Transform & transform);
+           // pcl::PointCloud<pcl::PointXYZRGB>::Ptr getICPReadyCloud(
+           //                 const cv::Mat &rgb,
+           //                 const cv::Mat &depth,
+           //                 const float fx,
+           //                 const float fy,
+           //                 const float cx,
+           //                 const float cy,
+           //                 int decimation,
+           //                 float voxel,
+           //                 const Transform & transform);
+            Eigen::Matrix4f GetTransMat(
                     pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr & cloud_source,
                     pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr & cloud_target,
                     pcl::PointCloud<pcl::PointXYZRGB> & cloud_source_registered);
@@ -90,20 +105,7 @@ namespace mobilefusion {
             //float max_depth_;
     };
 
-    class Transform
-    {
-        public:
-            Transform();
-            Transform(float r11, float r12, float r13, float o14,
-                      float r21, float r22, float r23, float o24,
-                      float r31, float r32, float r33, float o34);
-            bool isNull() const;
-            bool isIdentity() const;
-            Eigen::Matrix4f toEigen4f() const;
-            Transform fromEigen4f(const Eigen::Matrix4f & matrix);
-        private:
-            cv::Mat data_;
-    };
+
 
 }
 

@@ -1,7 +1,7 @@
 #include "Kinect.h"
 
-
-mobilefusion::Kinect::Kinect()
+namespace mobilefusion{
+Kinect::Kinect()
 {
     freenect2_ = 0;
     dev_ = 0;
@@ -10,7 +10,7 @@ mobilefusion::Kinect::Kinect()
     listener_ = 0;
 }
 
-mobilefusion::Kinect::~Kinect()
+Kinect::~Kinect()
 {
     dev_->stop();
     dev_->close();
@@ -18,7 +18,7 @@ mobilefusion::Kinect::~Kinect()
     delete registration_;
 }
 
-void mobilefusion::Kinect::init()
+void Kinect::init()
 {
     freenect2_ = new libfreenect2::Freenect2();
     if (freenect2_->enumerateDevices() == 0)
@@ -51,7 +51,7 @@ void mobilefusion::Kinect::init()
 
 }
 
-void mobilefusion::Kinect::captureImage(cv::Mat &rgb, cv::Mat &depth)
+void Kinect::captureImage(cv::Mat &rgb, cv::Mat &depth)
 {
     libfreenect2::FrameMap frames;
     listener_->waitForNewFrame(frames);
@@ -72,7 +72,7 @@ void mobilefusion::Kinect::captureImage(cv::Mat &rgb, cv::Mat &depth)
 }
 
 
-void mobilefusion::Kinect::rgbdFromCloud(
+void Kinect::rgbdFromCloud(
                 const  pcl::PointCloud<pcl::PointXYZRGB>& cloud,
                 float& cx, float& cy, float& fx, float& fy,
                 cv::Mat &depth, cv::Mat &rgb){
@@ -120,7 +120,7 @@ void mobilefusion::Kinect::rgbdFromCloud(
         }*/
 
 }
-pcl::PointCloud<pcl::PointXYZ>::Ptr mobilefusion::Kinect::cloudFromDepth(
+pcl::PointCloud<pcl::PointXYZ>::Ptr Kinect::cloudFromDepth(
                 const cv::Mat &depth,
                 float cx, float cy,
                 float fx, float fy,
@@ -155,7 +155,7 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr mobilefusion::Kinect::cloudFromDepth(
     return cloud;
 }
 
-pcl::PointCloud<pcl::PointXYZRGB>::Ptr mobilefusion::Kinect::cloudFromRgbd(
+pcl::PointCloud<pcl::PointXYZRGB>::Ptr Kinect::cloudFromRgbd(
                 const cv::Mat & rgb, const cv::Mat &depth,
                 float cx, float cy, float fx, float fy,
                 int decimation)
@@ -205,7 +205,7 @@ pcl::PointCloud<pcl::PointXYZRGB>::Ptr mobilefusion::Kinect::cloudFromRgbd(
 }
 
 
-pcl::PointXYZ mobilefusion::Kinect::projectDepthTo3D(
+pcl::PointXYZ Kinect::projectDepthTo3D(
                         const cv::Mat & depth,
                         float x, float y,
                         float cx, float cy,
@@ -225,8 +225,8 @@ pcl::PointXYZ mobilefusion::Kinect::projectDepthTo3D(
 }
 
 
-pcl::PointCloud<pcl::PointXYZRGB>::Ptr mobilefusion::Kinect::removeNaNFromPointCloud(
-                const pcl::PointCloud<pcl::PointXYZRGB>::Ptr & cloud)
+pcl::PointCloud<pcl::PointXYZRGB>::Ptr Kinect::removeNaNFromPointCloud(
+                     pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr & cloud)
 {
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr output(new pcl::PointCloud<pcl::PointXYZRGB>);
     std::vector<int> indices;
@@ -235,8 +235,8 @@ pcl::PointCloud<pcl::PointXYZRGB>::Ptr mobilefusion::Kinect::removeNaNFromPointC
 }
 
 
-pcl::PointCloud<pcl::PointXYZRGB>::Ptr mobilefusion::Kinect::voxelize(
-                const pcl::PointCloud<pcl::PointXYZRGB>::Ptr & cloud,
+pcl::PointCloud<pcl::PointXYZRGB>::Ptr Kinect::voxelize(
+                pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr & cloud,
                 float voxelSize)
 {
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr output(new pcl::PointCloud<pcl::PointXYZRGB>);
@@ -247,8 +247,8 @@ pcl::PointCloud<pcl::PointXYZRGB>::Ptr mobilefusion::Kinect::voxelize(
     return output;
 }
 
-
-pcl::PointCloud<pcl::PointXYZRGB>::Ptr mobilefusion::Kinect::transformPointCloud(
+/*
+pcl::PointCloud<pcl::PointXYZRGB>::Ptr Kinect::transformPointCloud(
                 const pcl::PointCloud<pcl::PointXYZRGB>::Ptr & cloud,
                 const mobilefusion::Transform & transform)
 {
@@ -256,8 +256,9 @@ pcl::PointCloud<pcl::PointXYZRGB>::Ptr mobilefusion::Kinect::transformPointCloud
     pcl::transformPointCloud(*cloud, *output, transform.toEigen4f());
     return output;
 }
-
-pcl::PointCloud<pcl::PointXYZ>::Ptr mobilefusion::Kinect::getICPReadyCloud(
+*/
+/*
+pcl::PointCloud<pcl::PointXYZ>::Ptr Kinect::getICPReadyCloud(
                 const cv::Mat &rgb,
                 const cv::Mat &depth,
                 float fx,
@@ -266,7 +267,7 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr mobilefusion::Kinect::getICPReadyCloud(
                 float cy,
                 int decimation,
                 float voxel,
-                const mobilefusion::Transform & transform)
+                const Transform & transform)
 {
     pcl::PointCloud<pcl::PointXYZ>::Ptr cloud;
     cloud = cloudFromRgbd(rgb,depth,cx,cy,fx,fy,decimation);
@@ -286,9 +287,9 @@ pcl::PointCloud<pcl::PointXYZ>::Ptr mobilefusion::Kinect::getICPReadyCloud(
     }
     return cloud;
 }
+*/
 
-
-mobilefusion::Transform mobilefusion::Kinect::GetTransMat(
+Eigen::Matrix4f Kinect::GetTransMat(
                         pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr & cloud_source,
                         pcl::PointCloud<pcl::PointXYZRGB>::ConstPtr & cloud_target,
                         pcl::PointCloud<pcl::PointXYZRGB> & cloud_source_registered)
@@ -303,8 +304,8 @@ mobilefusion::Transform mobilefusion::Kinect::GetTransMat(
     // pcl::removeNaNFromPointCloud(*modelCloud, *modelCloud, indices);
     // pcl::removeNaNFromPointCloud(*dataCloud, *dataCloud, indices);
 
-    cloud_source = mobilefusion::Kinect::removeNaNFromPointCloud(cloud_source);
-    cloud_target = mobilefusion::Kinect::removeNaNFromPointCloud(cloud_target);
+    cloud_source = Kinect::removeNaNFromPointCloud(cloud_source);
+    cloud_target = Kinect::removeNaNFromPointCloud(cloud_target);
 
     // pcl::VoxelGrid<pcl::PointXYZRGB> vg;
     //  vg.setInputCloud(modelCloud);
@@ -315,21 +316,22 @@ mobilefusion::Transform mobilefusion::Kinect::GetTransMat(
     // vg.setLeafSize(0.01f, 0.01f, 0.01f);
     // vg.filter(*dataCloudDownsampled);
 
-    cloud_sourceDownsampled = mobilefusion::Kinect::voxelize(cloud_source,0.01f);
-    cloud_targetDownsampled = mobilefusion::Kinect::voxelize(cloud_target,0.01f);
+    cloud_sourceDownsampled = Kinect::voxelize(cloud_source,0.01f);
+    cloud_targetDownsampled = Kinect::voxelize(cloud_target,0.01f);
 
     pcl::IterativeClosestPoint<pcl::PointXYZRGB, pcl::PointXYZRGB> gicp;
     gicp.setInputSource(cloud_sourceDownsampled);
     gicp.setInputTarget(cloud_targetDownsampled);
 
     gicp.align(cloud_source_registered);
-    return mobilefusion::Transform::fromEigen4f(gicp.getFinalTransformation());
+    return gicp.getFinalTransformation();
+    //Transform::fromEigen4f(gicp.getFinalTransformation());
 }
-
-mobilefusion::Transform::Transform() : data_(cv::Mat::zeros(3,4,CV_32FC1))
+/*
+Transform::Transform() : data_(cv::Mat::zeros(3,4,CV_32FC1))
 {}
 
-mobilefusion::Transform::Transform(
+Transform::Transform(
                 float r11, float r12, float r13, float o14,
                 float r21, float r22, float r23, float o24,
                 float r31, float r32, float r33, float o34)
@@ -340,24 +342,24 @@ mobilefusion::Transform::Transform(
                     r31, r32, r33, o34);
 }
 
-bool mobilefusion::Transform::isNull() const
+bool Transform::isNull() const
 {
-    return  ( data_[0] == 0.0f &&
-                         data_[1] == 0.0f &&
-                         data_[2] == 0.0f &&
-                         data_[3] == 0.0f &&
-                         data_[4] == 0.0f &&
-                         data_[5] == 0.0f &&
-                         data_[6] == 0.0f &&
-                         data_[7] == 0.0f &&
-                         data_[8] == 0.0f &&
-                         data_[9] == 0.0f &&
-                         data_[10] == 0.0f &&
-                         data_[11] == 0.0f);
+    return  ( data()[0] == 0.0f &&
+                         data()[1] == 0.0f &&
+                         data()[2] == 0.0f &&
+                         data()[3] == 0.0f &&
+                         data()[4] == 0.0f &&
+                         data()[5] == 0.0f &&
+                         data()[6] == 0.0f &&
+                         data()[7] == 0.0f &&
+                         data()[8] == 0.0f &&
+                         data()[9] == 0.0f &&
+                         data()()[10] == 0.0f &&
+                         data()[11] == 0.0f);
 
 }
 
-bool mobilefusion::Transform::isIdentity() const
+bool Transform::isIdentity() const
 {
          return (data()[0] == 1.0f &&
                          data()[1] == 0.0f &&
@@ -371,4 +373,6 @@ bool mobilefusion::Transform::isIdentity() const
                          data()[9] == 0.0f &&
                          data()[10] == 1.0f &&
                          data()[11] == 0.0f);
+}*/
+
 }
