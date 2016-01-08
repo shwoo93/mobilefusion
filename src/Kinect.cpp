@@ -59,12 +59,12 @@ namespace mobilefusion{
 
         registration_ = new libfreenect2::Registration(dev_->getIrCameraParams(), dev_->getColorCameraParams());
 
-        libfreenect2::Freenect2Device::Config config;
-        config.EnableBilateralFilter = bilateralFiltering_;
-        config.EnableEdgeAwareFilter = edgeAwareFiltering_;
-        config.MinDepth = minKinect2Depth_;
-        config.MaxDepth = maxKinect2Depth_;
-        dev_->setConfiguration(config);
+        //libfreenect2::Freenect2Device::Config config;
+        //config.EnableBilateralFilter = bilateralFiltering_;
+        //config.EnableEdgeAwareFilter = edgeAwareFiltering_;
+        //config.MinDepth = minKinect2Depth_;
+        //config.MaxDepth = maxKinect2Depth_;
+        //dev_->setConfiguration(config);
     }
 
     void Kinect::captureImage(cv::Mat &rgb, cv::Mat &depth)

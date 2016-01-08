@@ -14,7 +14,16 @@ namespace util3d {
             float cx, float cy,
             float fx, float fy,
             int decimation);
-
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cloudFromDepth(
+            const cv::Mat &depth,
+            float cx, float cy,
+            float fx, float fy,
+            int decimation);
+    pcl::PointXYZ projectDepthTo3D(
+            const cv::Mat &depth,
+            float x, float y,
+            float cx, float cy,
+            float fx, float fy);
     void rgbdFromCloud(
             const pcl::PointCloud<pcl::PointXYZRGB> &cloud,
             float &cx, float &cy, float &fx, float &fy,

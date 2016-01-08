@@ -10,7 +10,10 @@ namespace util3d {
             const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud,
             const Eigen::Matrix4f &transform);
 
-    Eigen::Matrix4f transformationIcp(
+    Eigen::Matrix4f transformationIcp_Xyz(
+            pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_source,
+            pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_target);
+    Eigen::Matrix4f transformationIcp_Xyzrgb(
             pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud_source,
             pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud_target);
 }
