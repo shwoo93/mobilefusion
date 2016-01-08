@@ -17,7 +17,7 @@ namespace mobilefusion{
                 listener_(0)
     {
         if (minDepth < 0.5f || maxDepth > 10.0f)
-            std::cerr << "minDepth must be > 0.5f and maxDepth must be < 10.0f" << std::endl;
+            std::cout << "minDepth must be > 0.5f and maxDepth must be < 10.0f" << std::endl;
     }
 
     Kinect::~Kinect()

@@ -11,7 +11,6 @@
 
 #include "CameraInterface.h"
 
-class Transform;
 
 namespace mobilefusion {
     class Kinect : public CameraInterface {
@@ -19,7 +18,7 @@ namespace mobilefusion {
             Kinect(
                     bool bilateralFiltering,
                     bool edgeAwareFiltering,
-                    float mixDepth,
+                    float minDepth,
                     float maxDepth);
             ~Kinect();
             void init();

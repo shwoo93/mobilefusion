@@ -45,7 +45,6 @@ namespace util3d {
         gicp.setInputTarget(cloud_target);
         gicp.setInputSource(cloud_source);
 
-        // You can set parameters of gicp if you needed
 
         pcl::PointCloud<pcl::PointXYZRGB> cloud_source_registered;
         gicp.align(cloud_source_registered);
