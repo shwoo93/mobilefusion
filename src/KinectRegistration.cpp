@@ -27,6 +27,7 @@ namespace MobileFusion {
         pcl::removeNaNFromPointCloud(*cloud, *output, indices);
         return output;
     }
+
     Eigen::Matrix4f KinectRegistration::getIcpTransformation(
             pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud_source,
             pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud_target) {

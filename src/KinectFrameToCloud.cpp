@@ -32,8 +32,6 @@ namespace MobileFusion{
         return clouds_;
     }
 
-
-
     void KinectFrameToCloud::OnFrame(cv::Mat &rgb, cv::Mat &depth) {
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
         cloud = MobileFusion::FrameToCloud::cloudFromRgbd(rgb, depth, cx_, cy_, fx_, fy_, decimation_);
