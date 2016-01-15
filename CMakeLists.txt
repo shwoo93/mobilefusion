@@ -51,8 +51,11 @@ SET(LIBRARIES
 SET(SOURCES
     src/Kinect.cpp
     src/CameraInterface.cpp
+<<<<<<< HEAD
     src/util3d.cpp
     src/util3d_registration.cpp
+=======
+>>>>>>> d90abbe570863f5858036b9a744f61a42d295191
 )
 
 link_directories(${PCL_LIBRARY_DIRS})
