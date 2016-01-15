@@ -1,6 +1,8 @@
 #ifndef KINECT_H_
 #define KINECT_H_
 
+#include <vector>
+
 #include <boost/shared_ptr.hpp>
 #include <libfreenect2/libfreenect2.hpp>
 #include <libfreenect2/frame_listener_impl.h>
@@ -10,32 +12,25 @@
 
 #include <pcl/point_types.h>
 
-#include "CameraInterface.h"
-
+#include "KinectFrameListener.h"
 
 namespace mobilefusion {
-    class Kinect : public CameraInterface {
+    class Kinect {
         public:
-            Kinect(
-                    bool bilateralFiltering,
-                    bool edgeAwareFiltering,
-                    float minDepth,
-                    float maxDepth);
+            Kinect();
             ~Kinect();
             void init();
-            void captureImage(cv::Mat &rgb, cv::Mat &depth);
+            void captureImage();
+            void addFrameListener(boost::shared_ptr<KinectFrameListener> frame_listener);
 
         private:
-            boost::shared_ptr<libfreenect2::Freenect2> freenect2_;
-            boost::shared_ptr<libfreenect2::Freenect2Device> dev_;
+            libfreenect2::Freenect2 freenect2_;
             boost::shared_ptr<libfreenect2::PacketPipeline> pipeline_;
+            boost::shared_ptr<libfreenect2::Freenect2Device> dev_;
             boost::shared_ptr<libfreenect2::Registration> registration_;
             boost::shared_ptr<libfreenect2::SyncMultiFrameListener> listener_;
 
-            bool bilateralFiltering_;
-            bool edgeAwareFiltering_;
-            float minKinect2Depth_;
-            float maxKinect2Depth_;
+            std::vector<boost::shared_ptr<KinectFrameListener> > frame_listeners_;
     };
 }
 

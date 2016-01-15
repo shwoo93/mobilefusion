@@ -38,9 +38,11 @@ SET(LIBRARIES
 
 SET(SOURCES
     src/Kinect.cpp
-    src/CameraInterface.cpp
-    src/util3d.cpp
-    src/util3d_registration.cpp
+    src/Util3d.cpp
+    src/Util3dRegistration.cpp
+    src/KinectFrameListener.cpp
+    src/KinectRecorder.cpp
+    src/KinectRenderer.cpp
 )
 
 link_directories(${PCL_LIBRARY_DIRS})
