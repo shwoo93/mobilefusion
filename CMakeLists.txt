@@ -9,18 +9,6 @@ IF(${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_BINARY_DIR})
     MESSAGE(FATAL_ERROR "In-source builds not allowed.")
 ENDIF()
 
-# C++ 11
-INCLUDE(CheckCXXCompilerFlag)
-CHECK_CXX_COMPILER_FLAG("-std=c++11" COMPILER_SUPPORTS_CXX11)
-CHECK_CXX_COMPILER_FLAG("-std=c++0x" COMPILER_SUPPORTS_CXX0X)
-IF(COMPILER_SUPPORTS_CXX11)
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-ELSEIF(COMPILER_SUPPORTS_CXX0X)
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
-ELSE()
-    MESSAGE(STATUS "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
-ENDIF()
-
 # set output directory
 SET(LIBRARY_OUTPUT_PATH ${MY_DIR}/lib)
 
@@ -51,11 +39,8 @@ SET(LIBRARIES
 SET(SOURCES
     src/Kinect.cpp
     src/CameraInterface.cpp
-<<<<<<< HEAD
     src/util3d.cpp
     src/util3d_registration.cpp
-=======
->>>>>>> d90abbe570863f5858036b9a744f61a42d295191
 )
 
 link_directories(${PCL_LIBRARY_DIRS})
