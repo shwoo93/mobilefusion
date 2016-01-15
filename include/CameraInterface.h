@@ -8,7 +8,7 @@ namespace mobilefusion{
     {
         public:
             CameraInterface();
-            ~CameraInterface();
+            virtual ~CameraInterface();
             virtual void captureImage(cv::Mat &rgb, cv::Mat &depth) = 0;
     };
 }

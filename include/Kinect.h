@@ -25,11 +25,11 @@ namespace mobilefusion {
             void captureImage(cv::Mat &rgb, cv::Mat &depth);
 
         private:
-            libfreenect2::Freenect2 *freenect2_;
-            libfreenect2::Freenect2Device *dev_;
-            libfreenect2::PacketPipeline *pipeline_;
-            libfreenect2::Registration *registration_;
-            libfreenect2::SyncMultiFrameListener *listener_;
+            boost::shared_ptr<libfreenect2::Freenect2> *freenect2_;
+            boost::shared_ptr<libfreenect2::Freenect2Device> *dev_;
+            boost::shared_ptr<libfreenect2::PacketPipeline> *pipeline_;
+            boost::shared_ptr<libfreenect2::Registration> *registration_;
+            boost::shared_ptr<libfreenect2::SyncMultiFrameListener> *listener_;
 
             bool bilateralFiltering_;
             bool edgeAwareFiltering_;

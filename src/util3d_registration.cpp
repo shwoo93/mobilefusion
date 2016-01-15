@@ -44,7 +44,7 @@ namespace mobilefusion {
             std::cout << "sampled number of target point cloud : " << cloud_targetDownsampled->size() << std::endl;
 
 
-            pcl::IterativeClosestPoint<pcl::PointXYZRGB, pcl::PointXYZRGB> icp;
+            pcl::GeneralizedIterativeClosestPoint<pcl::PointXYZRGB, pcl::PointXYZRGB> icp;
 
             icp.setInputTarget(cloud_targetDownsampled);
             icp.setInputSource(cloud_sourceDownsampled);
