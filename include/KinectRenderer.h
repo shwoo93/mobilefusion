@@ -5,10 +5,10 @@
 
 namespace MobileFusion {
     class KinectRenderer : public KinectFrameListener {
-    public:
-        KinectRenderer();
-        ~KinectRenderer();
-        void OnFrame(cv::Mat &rgb, cv::Mat &depth);
+        public:
+            KinectRenderer();
+            ~KinectRenderer();
+            void OnFrame(cv::Mat &rgb, cv::Mat &depth);
     };
 }
 

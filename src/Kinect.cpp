@@ -4,33 +4,33 @@
 
 namespace MobileFusion{
     Kinect::Kinect()
-    : freenect2_()
-    , listener_(libfreenect2::Frame::Color | libfreenect2::Frame::Ir | libfreenect2::Frame::Depth)
-    , pipeline_(new libfreenect2::CpuPacketPipeline())
-    , dev_(freenect2_.openDevice(freenect2_.getDefaultDeviceSerialNumber(), pipeline_.get()))
-    , registration_()
-    , frame_listeners_() {
-        if (freenect2_.enumerateDevices() == 0) {
-            std::cout << "no device connected!" << std::endl;
-            exit(1);
-        }
+        : freenect2_()
+          , listener_(libfreenect2::Frame::Color | libfreenect2::Frame::Ir | libfreenect2::Frame::Depth)
+          , pipeline_(new libfreenect2::CpuPacketPipeline())
+          , dev_(freenect2_.openDevice(freenect2_.getDefaultDeviceSerialNumber(), pipeline_.get()))
+          , registration_()
+          , frame_listeners_() {
+              if (freenect2_.enumerateDevices() == 0) {
+                  std::cout << "no device connected!" << std::endl;
+                  exit(1);
+              }
 
-        if (dev_ == 0) {
-            std::cout << "failure opening device!" << std::endl;
-            exit(1);
-        }
+              if (dev_ == 0) {
+                  std::cout << "failure opening device!" << std::endl;
+                  exit(1);
+              }
 
-        std::cout << "device serial: " << dev_->getSerialNumber() << std::endl;
-        std::cout << "device firmware: " << dev_->getFirmwareVersion() << std::endl;
+              std::cout << "device serial: " << dev_->getSerialNumber() << std::endl;
+              std::cout << "device firmware: " << dev_->getFirmwareVersion() << std::endl;
 
-        dev_->setColorFrameListener(&listener_);
-        dev_->setIrAndDepthFrameListener(&listener_);
+              dev_->setColorFrameListener(&listener_);
+              dev_->setIrAndDepthFrameListener(&listener_);
 
-        dev_->start();
+              dev_->start();
 
-        registration_ = boost::shared_ptr<libfreenect2::Registration>(
-            new libfreenect2::Registration(dev_->getIrCameraParams(), dev_->getColorCameraParams()));
-    }
+              registration_ = boost::shared_ptr<libfreenect2::Registration>(
+                      new libfreenect2::Registration(dev_->getIrCameraParams(), dev_->getColorCameraParams()));
+          }
 
     Kinect::~Kinect() {
         if(dev_ != 0) {

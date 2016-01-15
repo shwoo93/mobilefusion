@@ -5,17 +5,17 @@
 
 namespace MobileFusion {
     class KinectRecorder : public KinectFrameListener {
-    public:
-        KinectRecorder();
-        ~KinectRecorder();
-        void setMinFrameCount(int min);
-        void setMaxFrameCount(int max);
-        void OnFrame(cv::Mat &rgb, cv::Mat &depth);
+        public:
+            KinectRecorder();
+            ~KinectRecorder();
+            void setMinFrameCount(int min);
+            void setMaxFrameCount(int max);
+            void OnFrame(cv::Mat &rgb, cv::Mat &depth);
 
-    private:
-    	int frame_count_;
-    	int min_;
-    	int max_;
+        private:
+            int frame_count_;
+            int min_;
+            int max_;
     };
 }
 
