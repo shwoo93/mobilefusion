@@ -1,6 +1,6 @@
-#include "Kinect.h"
-#include "util3d.h"
-#include "util3d_registration.h"
+
+#include <vector>
+#include <list>
 
 #include <cpu_tsdf/marching_cubes_tsdf_octree.h>
 #include <cpu_tsdf/octree.h>
@@ -11,9 +11,9 @@
 #include <pcl/PolygonMesh.h>
 #include <pcl/io/ply_io.h>
 
-
-#include <vector>
-#include <list>
+#include "Kinect.h"
+#include "util3d.h"
+#include "util3d_registration.h"
 
 int main(int argc, char **argv)
 {
@@ -30,19 +30,19 @@ int main(int argc, char **argv)
         0, 0, 1, 0,
         0, 0, 0, 1;
 
-    //tsdf initialize
     cpu_tsdf::TSDFVolumeOctree::Ptr tsdf (new cpu_tsdf::TSDFVolumeOctree);
     tsdf->setGridSize(1.,1.,1.);
     tsdf->setResolution(128,128,128);
     tsdf->setIntegrateColor(true);
     tsdf->reset();
-    //marchingcube
+
     cpu_tsdf::MarchingCubesTSDFOctree mc;
     mc.setMinWeight(2);
     mc.setColorByRGB(true);
 
     std::vector<pcl::PointCloud<pcl::PointXYZRGB>::Ptr> point_vec;
     std::vector<Eigen::Affine3d> transform_list;
+
     //pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud_before;
     //pcl::PointCloud<pcl::PointXYZRGB>::Ptr pointcloud_current;
 
@@ -81,26 +81,13 @@ int main(int argc, char **argv)
             Eigen::Affine3d T_tmp = Eigen::Affine3d(T_4d);
             transform_list.push_back(T_tmp);
             T*=mobilefusion::util3d::transformationIcp_Xyzrgb(point_vec[i],point_vec[i+1]);
+            tsdf->integrateCloud(*point_vec[i], empty_cloud, transform_list[i]);
             i++;
         }
-        //static int j=0;
-        //for(;j<transform_list.size();j++)
-        //{
-        //    tsdf->integrateCloud(*point_vec[j],empty_cloud,transform_list[j]);
-        //}
 
         time++;
 
     }
-
-    for(int i=0;i<transform_list.size();i++)
-    {
-            pcl::PointCloud<pcl::PointXYZRGB> point_cloud = *point_vec[i];
-            tsdf->integrateCloud(point_cloud,empty_cloud,transform_list[i]);
-    }
-
-    //tsdf->integrateCloud(*point_vec[i],empty_cloud,transform_list[i]);
-    //std::cout<<i<<std::endl;
 
     mc.setInputTSDF(tsdf);
     pcl::PolygonMesh mesh;
@@ -109,20 +96,8 @@ int main(int argc, char **argv)
     std::cout<<"end"<<std::endl;
 
     return 0;
-    //pointcloud_current = mobilefusion::util3d::cloudFromRgbd(rgb,depth,256.0f,212.0f,540.686f,540.686f,1);
-    //tsdf->integrateCloud(*pointcloud_before,empty_cloud,T_tmp);
-    //T*=mobilefusion::util3d::transformationIcp(pointcloud_before,pointcloud_current);
-    //pointcloud_before = pointcloud_current;
 
 }
-//cpu_tsdf::MarchingCubesTSDFOctree mc;
-//mc.setInputTSDF(tsdf);
-//mc.setMinWeight(2);
-//mc.setColorByRGB(true);
-//pcl::PolygonMesh mesh;
-//mc.reconstruct (mesh);
-//return 0;
-//}
 
 
 //while(true)
