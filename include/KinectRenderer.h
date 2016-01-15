@@ -1,9 +1,9 @@
-#ifndef _KINECT_RENDERER_H_
-#define _KINECT_RENDERER_H_
+#ifndef __KINECT_RENDERER_H__
+#define __KINECT_RENDERER_H__
 
 #include "KinectFrameListener.h"
 
-namespace mobilefusion {
+namespace MobileFusion {
     class KinectRenderer : public KinectFrameListener {
     public:
         KinectRenderer();

@@ -40,7 +40,6 @@ SET(SOURCES
     src/Kinect.cpp
     src/Util3d.cpp
     src/Util3dRegistration.cpp
-    src/KinectFrameListener.cpp
     src/KinectRecorder.cpp
     src/KinectRenderer.cpp
 )

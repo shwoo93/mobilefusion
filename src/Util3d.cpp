@@ -1,14 +1,13 @@
 #include "Util3d.h"
 
-namespace mobilefusion {
+namespace MobileFusion {
     namespace util3d {
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloudFromRgbd(
                 const cv::Mat &rgb,
                 const cv::Mat &depth,
                 float cx, float cy,
                 float fx, float fy,
-                int decimation)
-        {
+                int decimation) {
             pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
             if (decimation < 1)
                 return cloud;
@@ -40,8 +39,7 @@ namespace mobilefusion {
                 const cv::Mat & depth,
                 float cx, float cy,
                 float fx, float fy,
-                int decimation)
-        {
+                int decimation) {
             pcl::PointCloud<pcl::PointXYZ>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZ>);
 
             if(decimation <1)
@@ -72,8 +70,7 @@ namespace mobilefusion {
                 const cv::Mat &depth,
                 float x, float y,
                 float cx, float cy,
-                float fx, float fy)
-        {
+                float fx, float fy) {
             pcl::PointXYZ pt;
 
             float depth_point = static_cast<float>(depth.at<unsigned short>(y, x)) * 0.001f;
@@ -93,10 +90,8 @@ namespace mobilefusion {
             cv::Mat depth_temp(cloud.height,cloud.width,CV_32FC1);
             cv::Mat rgb_temp(cloud.height,cloud.width,CV_8UC3);
 
-            for(unsigned int h = 0; h < cloud.height; h++)
-            {
-                for(unsigned int w = 0; w < cloud.width; w++)
-                {
+            for(unsigned int h = 0; h < cloud.height; h++) {
+                for(unsigned int w = 0; w < cloud.width; w++) {
                     rgb_temp.at<cv::Vec3b>(h,w)[0] = cloud.at(h*cloud.width + w).b;
                     rgb_temp.at<cv::Vec3b>(h,w)[1] = cloud.at(h*cloud.width + w).g;
                     rgb_temp.at<cv::Vec3b>(h,w)[2] = cloud.at(h*cloud.width + w).r;

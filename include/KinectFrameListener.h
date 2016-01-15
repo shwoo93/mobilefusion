@@ -1,10 +1,9 @@
-#ifndef _KINECT_FRAME_LISTENER_
-#define _KINECT_FRAME_LISTENER_
+#ifndef __KINECT_FRAME_LISTENER__
+#define __KINECT_FRAME_LISTENER__
 
 #include <opencv2/opencv.hpp>
 
-namespace mobilefusion{
-
+namespace MobileFusion {
 	class KinectFrameListener {
 	public:
 		KinectFrameListener() {};

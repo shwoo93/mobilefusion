@@ -7,8 +7,7 @@
 #include <pcl/filters/extract_indices.h>
 #include <pcl/filters/voxel_grid.h>
 
-
-namespace mobilefusion {
+namespace MobileFusion {
     namespace util3d {
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr transformPointCloud(
                 const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud,
@@ -62,8 +61,7 @@ namespace mobilefusion {
 
         Eigen::Matrix4f transformation_Xyz(
                 pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_source,
-                pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_target)
-        {
+                pcl::PointCloud<pcl::PointXYZ>::Ptr &cloud_target) {
             pcl::IterativeClosestPoint<pcl::PointXYZ, pcl::PointXYZ> icp;
 
             pcl::PointCloud<pcl::PointXYZ>::Ptr cloud_sourceDownsampled(new pcl::PointCloud<pcl::PointXYZ>);
