@@ -1,6 +1,7 @@
 #ifndef KINECT_H_
 #define KINECT_H_
 
+#include <boost/shared_ptr.hpp>
 #include <libfreenect2/libfreenect2.hpp>
 #include <libfreenect2/frame_listener_impl.h>
 #include <libfreenect2/registration.h>
@@ -25,11 +26,11 @@ namespace mobilefusion {
             void captureImage(cv::Mat &rgb, cv::Mat &depth);
 
         private:
-            boost::shared_ptr<libfreenect2::Freenect2> *freenect2_;
-            boost::shared_ptr<libfreenect2::Freenect2Device> *dev_;
-            boost::shared_ptr<libfreenect2::PacketPipeline> *pipeline_;
-            boost::shared_ptr<libfreenect2::Registration> *registration_;
-            boost::shared_ptr<libfreenect2::SyncMultiFrameListener> *listener_;
+            boost::shared_ptr<libfreenect2::Freenect2> freenect2_;
+            boost::shared_ptr<libfreenect2::Freenect2Device> dev_;
+            boost::shared_ptr<libfreenect2::PacketPipeline> pipeline_;
+            boost::shared_ptr<libfreenect2::Registration> registration_;
+            boost::shared_ptr<libfreenect2::SyncMultiFrameListener> listener_;
 
             bool bilateralFiltering_;
             bool edgeAwareFiltering_;

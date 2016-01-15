@@ -10,11 +10,11 @@ namespace mobilefusion{
                 edgeAwareFiltering_(edgeAwareFiltering),
                 minKinect2Depth_(minDepth),
                 maxKinect2Depth_(maxDepth),
-                freenect2_(0),
-                dev_(0),
-                pipeline_(0),
-                registration_(0),
-                listener_(0)
+                freenect2_(),
+                dev_(),
+                pipeline_(),
+                registration_(),
+                listener_()
     {
         if (minDepth < 0.5f || maxDepth > 10.0f)
             std::cout << "minDepth must be > 0.5f and maxDepth must be < 10.0f" << std::endl;
@@ -25,12 +25,12 @@ namespace mobilefusion{
         dev_->stop();
         dev_->close();
 
-        delete registration_;
+        //delete registration_;
     }
 
     void Kinect::init()
     {
-        freenect2_ = new libfreenect2::Freenect2();
+        freenect2_ = boost::shared_ptr<libfreenect2::Freenect2>(new libfreenect2::Freenect2());
         if (freenect2_->enumerateDevices() == 0)
         {
             std::cout << "no device connected!" << std::endl;
@@ -38,8 +38,8 @@ namespace mobilefusion{
         }
 
         std::string serial = freenect2_->getDefaultDeviceSerialNumber();
-        pipeline_ = new libfreenect2::OpenCLPacketPipeline();
-        dev_ = freenect2_->openDevice(serial, pipeline_);
+        pipeline_ = boost::shared_ptr<libfreenect2::OpenCLPacketPipeline>(new libfreenect2::OpenCLPacketPipeline());
+        dev_ = boost::shared_ptr<libfreenect2::Freenect2Device>(freenect2_->openDevice(serial, pipeline_.get()));
 
 
         if (dev_ == 0)
@@ -47,17 +47,18 @@ namespace mobilefusion{
             std::cout << "failure opening device!" << std::endl;
         }
 
-        listener_ = new libfreenect2::SyncMultiFrameListener(libfreenect2::Frame::Color | libfreenect2::Frame::Ir | libfreenect2::Frame::Depth);
+        listener_ = boost::shared_ptr<libfreenect2::SyncMultiFrameListener>(new 
+            libfreenect2::SyncMultiFrameListener(libfreenect2::Frame::Color | libfreenect2::Frame::Ir | libfreenect2::Frame::Depth));
 
-        dev_->setColorFrameListener(listener_);
-        dev_->setIrAndDepthFrameListener(listener_);
+        dev_->setColorFrameListener(listener_.get());
+        dev_->setIrAndDepthFrameListener(listener_.get());
 
         dev_->start();
 
         std::cout << "device serial: " << dev_->getSerialNumber() << std::endl;
         std::cout << "device firmware: " << dev_->getFirmwareVersion() << std::endl;
 
-        registration_ = new libfreenect2::Registration(dev_->getIrCameraParams(), dev_->getColorCameraParams());
+        registration_ = boost::shared_ptr<libfreenect2::Registration>(new libfreenect2::Registration(dev_->getIrCameraParams(), dev_->getColorCameraParams()));
 
         //libfreenect2::Freenect2Device::Config config;
         //config.EnableBilateralFilter = bilateralFiltering_;
