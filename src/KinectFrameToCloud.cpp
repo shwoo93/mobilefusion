@@ -8,15 +8,15 @@ namespace MobileFusion{
           , fy_(540.686f)
           , decimation_(5)
           , cloud_num_(0)
-          , mat(Eigen::Matrix4f::Identity())
+          , mat_(Eigen::Matrix4f::Identity())
           , cloud_(new pcl::PointCloud<pcl::PointXYZRGB>)
           , registration_(new KinectRegistration())
-          , tsdf(new cpu_tsdf::TSDFVolumeOctree) {
-              tsdf->setGridSize(1.,1.,1.);
-              tsdf->setResolution(128, 128, 128);
-              tsdf->setIntegrateColor(false);
-              tsdf->reset();
-              transformations_.push_back(mat);
+          , tsdf_(new cpu_tsdf::TSDFVolumeOctree) {
+              tsdf_->setGridSize(1.,1.,1.);
+              tsdf_->setResolution(128, 128, 128);
+              tsdf_->setIntegrateColor(false);
+              tsdf_->reset();
+              transformations_.push_back(mat_);
           }
 
     KinectFrameToCloud::~KinectFrameToCloud() {
@@ -44,7 +44,7 @@ namespace MobileFusion{
         return transformations_;
     }
     cpu_tsdf::TSDFVolumeOctree::Ptr KinectFrameToCloud::getTSDF() {
-        return tsdf;
+        return tsdf_;
     }
 
     void KinectFrameToCloud::addPointCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud) {
@@ -59,11 +59,11 @@ namespace MobileFusion{
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr empty_cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
         if(clouds_.size()>=2){
             //registration_->setVoxelSize(0.1f);
-            Eigen::Matrix4d mat_4d(mat.cast<double>());
+            Eigen::Matrix4d mat_4d(mat_.cast<double>());
             Eigen::Affine3d affine(mat_4d);
-            tsdf->integrateCloud(*clouds_[i],*empty_cloud,affine);
-            mat*=registration_->getIcpTransformation(clouds_[i+1],clouds_[i]);
-            transformations_.push_back(mat);
+            tsdf_->integrateCloud(*clouds_[i],*empty_cloud,affine);
+            mat_*=registration_->getIcpTransformation(clouds_[i+1],clouds_[i]);
+            transformations_.push_back(mat_);
         }
     }
 

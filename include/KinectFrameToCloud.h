@@ -27,12 +27,12 @@ namespace MobileFusion {
             float fy_;
             int decimation_;
             int cloud_num_;
-            Eigen::Matrix4f mat;
+            Eigen::Matrix4f mat_;
             pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_;
             boost::shared_ptr<KinectRegistration> registration_;
             std::vector<pcl::PointCloud<pcl::PointXYZRGB>::Ptr> clouds_;
             std::vector<Eigen::Matrix4f> transformations_;
-            cpu_tsdf::TSDFVolumeOctree::Ptr tsdf;
+            cpu_tsdf::TSDFVolumeOctree::Ptr tsdf_;
     };
 
     namespace FrameToCloud {
