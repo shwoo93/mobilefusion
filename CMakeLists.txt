@@ -38,9 +38,9 @@ SET(LIBRARIES
 
 SET(SOURCES
     src/Kinect.cpp
-    src/KinectFrameToCloud.cpp
+    src/CloudProvider.cpp
     src/KinectRecorder.cpp
-    src/KinectRegistration.cpp
+    src/FusionManager.cpp
     src/KinectRenderer.cpp
 )
 

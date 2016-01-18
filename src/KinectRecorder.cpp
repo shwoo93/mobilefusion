@@ -6,10 +6,10 @@
 
 namespace MobileFusion{
     KinectRecorder::KinectRecorder()
-        : frame_count_(0)
-          , min_(0)
-          , max_(0) {
-          }
+    : frame_count_(0)
+    , min_(0)
+    , max_(0) {
+    }
 
     KinectRecorder::~KinectRecorder() {
     }

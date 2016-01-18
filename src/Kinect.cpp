@@ -5,11 +5,12 @@
 namespace MobileFusion{
     Kinect::Kinect()
         : freenect2_()
-          , listener_(libfreenect2::Frame::Color | libfreenect2::Frame::Ir | libfreenect2::Frame::Depth)
-          , pipeline_(new libfreenect2::CpuPacketPipeline())
-          , dev_(freenect2_.openDevice(freenect2_.getDefaultDeviceSerialNumber(), pipeline_.get()))
-          , registration_()
-          , frame_listeners_() {
+        , listener_(libfreenect2::Frame::Color | libfreenect2::Frame::Ir | libfreenect2::Frame::Depth)
+        , pipeline_(new libfreenect2::CpuPacketPipeline())
+        , dev_(freenect2_.openDevice(freenect2_.getDefaultDeviceSerialNumber(), pipeline_.get()))
+        , registration_()
+        , frame_listeners_() {
+
               if (freenect2_.enumerateDevices() == 0) {
                   std::cout << "no device connected!" << std::endl;
                   exit(1);
