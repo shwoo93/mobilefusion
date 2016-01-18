@@ -7,7 +7,16 @@ namespace MobileFusion{
           , fx_(540.686f)
           , fy_(540.686f)
           , decimation_(5)
-          , cloud_num_(0) {
+          , cloud_num_(0)
+          , mat(Eigen::Matrix4f::Identity())
+          , cloud_(new pcl::PointCloud<pcl::PointXYZRGB>)
+          , registration_(new KinectRegistration())
+          , tsdf(new cpu_tsdf::TSDFVolumeOctree) {
+              tsdf->setGridSize(1.,1.,1.);
+              tsdf->setResolution(128, 128, 128);
+              tsdf->setIntegrateColor(false);
+              tsdf->reset();
+              transformations_.push_back(mat);
           }
 
     KinectFrameToCloud::~KinectFrameToCloud() {
@@ -31,17 +40,37 @@ namespace MobileFusion{
     std::vector<pcl::PointCloud<pcl::PointXYZRGB>::Ptr> KinectFrameToCloud::getClouds() {
         return clouds_;
     }
-
-    void KinectFrameToCloud::OnFrame(cv::Mat &rgb, cv::Mat &depth) {
-        pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
-        cloud = MobileFusion::FrameToCloud::cloudFromRgbd(rgb, depth, cx_, cy_, fx_, fy_, decimation_);
-        OnCloud(cloud);
+    std::vector<Eigen::Matrix4f> KinectFrameToCloud::getTransMat() {
+        return transformations_;
+    }
+    cpu_tsdf::TSDFVolumeOctree::Ptr KinectFrameToCloud::getTSDF() {
+        return tsdf;
     }
 
-    void KinectFrameToCloud::OnCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud) {
+    void KinectFrameToCloud::addPointCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud) {
         clouds_.push_back(cloud);
         ++cloud_num_;
     }
+
+    void KinectFrameToCloud::OnFrame(cv::Mat &rgb, cv::Mat &depth) {
+        static int i=0;
+        cloud_ = MobileFusion::FrameToCloud::cloudFromRgbd(rgb, depth, cx_, cy_, fx_, fy_, decimation_);
+        addPointCloud(cloud_);
+        pcl::PointCloud<pcl::PointXYZRGB>::Ptr empty_cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
+        if(clouds_.size()>=2){
+            //registration_->setVoxelSize(0.1f);
+            Eigen::Matrix4d mat_4d(mat.cast<double>());
+            Eigen::Affine3d affine(mat_4d);
+            tsdf->integrateCloud(*clouds_[i],*empty_cloud,affine);
+            mat*=registration_->getIcpTransformation(clouds_[i+1],clouds_[i]);
+            transformations_.push_back(mat);
+        }
+    }
+
+    //void KinectFrameToCloud::OnCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud) {
+    //    clouds_.push_back(cloud);
+    //    ++cloud_num_;
+    //}
 
     namespace FrameToCloud {
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloudFromRgbd(
