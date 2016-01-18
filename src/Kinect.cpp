@@ -54,7 +54,7 @@ namespace MobileFusion{
 
         listener_.release(frames);
 
-        for(int i = 0; i < frame_listeners_.size(); ++i) {
+        for(int i=0; i<frame_listeners_.size(); ++i) {
             frame_listeners_[i]->OnFrame(rgb, depth);
         }
     }

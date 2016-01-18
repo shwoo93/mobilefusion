@@ -7,6 +7,7 @@
 #include <pcl/filters/filter.h>
 #include <pcl/filters/extract_indices.h>
 #include <pcl/filters/voxel_grid.h>
+#include <pcl/visualization/cloud_viewer.h>
 
 #include "CloudListener.h"
 
@@ -25,8 +26,11 @@ namespace MobileFusion {
                     pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud_source,
                     pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud_target);
         private:
-            std::vector<pcl::PointCloud<pcl::PointXYZRGB>::Ptr> clouds_;
             float voxelsize_;
+            Eigen::Matrix4f mat_;
+            pcl::PointCloud<pcl::PointXYZRGB> empty_cloud_;
+            cpu_tsdf::TSDFVolumeOctree::Ptr tsdf;
+            std::vector<pcl::PointCloud<pcl::PointXYZRGB>::Ptr> clouds_;
     };
 
 }
