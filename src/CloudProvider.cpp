@@ -25,8 +25,8 @@ namespace MobileFusion{
 
     void CloudProvider::OnFrame(cv::Mat &rgb, cv::Mat &depth) {
         cloud_ = MobileFusion::FrameToCloud::cloudFromRgbd(rgb, depth, cx_, cy_, fx_, fy_, decimation_);
-        for(int i=0;i<cloud_listeners_.size();++i) {
-            cloud_listeners_[i]->onCloudFrame(cloud_);
+        for(std::vector<boost::shared_ptr<CloudListener> >::iterator iter = cloud_listeners_.begin() ; iter != cloud_listeners_.end() ; iter++) {
+            (*iter)->onCloudFrame(cloud_);
         }
     }
 
