@@ -17,11 +17,8 @@ namespace MobileFusion {
     class CloudListener {
         public:
             CloudListener() {};
-            virtual ~CloudListener() {}
+            virtual ~CloudListener() {};
             virtual void onCloudFrame(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud) = 0;
     };
 }
-
-
-
 #endif

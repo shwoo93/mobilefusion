@@ -11,7 +11,7 @@ namespace MobileFusion {
     KinectRenderer::~KinectRenderer() {
     }
 
-    void KinectRenderer::OnFrame(cv::Mat &rgb, cv::Mat &depth) {
+    void KinectRenderer::onFrame(cv::Mat &rgb, cv::Mat &depth) {
         cv::imshow("rgb", rgb);
         cv::imshow("depth", depth);
         cv::waitKey(10);

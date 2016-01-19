@@ -22,7 +22,7 @@ namespace MobileFusion{
         max_ = max;
     }
 
-    void KinectRecorder::OnFrame(cv::Mat &rgb, cv::Mat &depth) {
+    void KinectRecorder::onFrame(cv::Mat &rgb, cv::Mat &depth) {
         if(frame_count_ >= min_ && frame_count_ <= max_) {
             std::cout << "save image" << std::endl;
             std::string rgb_name = str(boost::format("/home/vllab/Desktop/images/rgb/kinect_rgb%1%.jpg") % frame_count_);

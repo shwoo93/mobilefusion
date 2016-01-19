@@ -1,89 +1,93 @@
-
 #include "FusionManager.h"
 
 #include <vector>
 
+#include <boost/chrono/thread_clock.hpp>
+
+using namespace boost::chrono;
+
 namespace MobileFusion {
     FusionManager::FusionManager()
-    : voxelsize_(0.5f)
-    , tsdf(new cpu_tsdf::TSDFVolumeOctree) {
+    :
+    renderer_(new CloudCompareRenderer())
+    ,voxelsize_(5.f)
+    ,tsdf_(new cpu_tsdf::TSDFVolumeOctree) {
          mat_ = Eigen::Matrix4f::Identity();
-         tsdf->setGridSize(1., 1., 1.);
-         tsdf->setResolution(128, 128, 128);
-         tsdf->setIntegrateColor(true);
-         tsdf->reset();
+         tsdf_->setGridSize(1., 1., 1.);
+         tsdf_->setResolution(128, 128, 128);
+         tsdf_->setIntegrateColor(true);
+         tsdf_->reset();
     }
 
     FusionManager::~FusionManager() {
     }
 
+    void FusionManager::onFrame(cv::Mat &rgb, cv::Mat &depth) {
+        std::cout<<"FusionManager_onFrame"<<std::endl;
+    }
+
     void FusionManager::onCloudFrame(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud) {
-        static int i = 0;
         clouds_.push_back(cloud);
-       if(clouds_.size()>=2) {
+        if(clouds_.size()>=2) {
             Eigen::Matrix4d mat_4d(mat_.cast<double>());
             Eigen::Affine3d affine(mat_4d);
             // tsdf->integrateCloud(*clouds_[i],empty_cloud_,affine);
-            mat_ *= getIcpTransformation(clouds_[i+1],clouds_[i]);
-            i++;
+            mat_ *= getIcpTransformation(clouds_[clouds_.size() - 1], clouds_[clouds_.size() - 2]);
         }
     }
 
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr FusionManager::voxelize(
-            const pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud) {
-        pcl::PointCloud<pcl::PointXYZRGB>::Ptr output(new pcl::PointCloud<pcl::PointXYZRGB>);
-        pcl::VoxelGrid<pcl::PointXYZRGB> filter;
-        filter.setLeafSize(voxelsize_, voxelsize_, voxelsize_);
-        filter.setInputCloud(cloud);
-        filter.filter(*output);
-        return output;
-    }
-
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr FusionManager::removeNaNFromPointCloud(
-            const pcl::PointCloud<pcl::PointXYZRGB>::Ptr & cloud) {
-        pcl::PointCloud<pcl::PointXYZRGB>::Ptr output(new pcl::PointCloud<pcl::PointXYZRGB>);
-        std::vector<int> indices;
-        pcl::removeNaNFromPointCloud(*cloud, *output, indices);
-        return output;
-    }
 
     Eigen::Matrix4f FusionManager::getIcpTransformation(
             pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud_source,
             pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud_target) {
 
-        pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_sourceRemovedNaN(new pcl::PointCloud<pcl::PointXYZRGB>);
-        pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_targetRemovedNaN(new pcl::PointCloud<pcl::PointXYZRGB>);
+        //thread_clock::time_point start = thread_clock::now();
+
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_sourceDownsampled(new pcl::PointCloud<pcl::PointXYZRGB>);
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_targetDownsampled(new pcl::PointCloud<pcl::PointXYZRGB>);
 
-        cloud_sourceRemovedNaN = removeNaNFromPointCloud(cloud_source);
-        cloud_targetRemovedNaN = removeNaNFromPointCloud(cloud_target);
+        //make dense
+        std::vector<int> indices;
+        pcl::removeNaNFromPointCloud(*cloud_source, *cloud_source, indices);
+        pcl::removeNaNFromPointCloud(*cloud_target, *cloud_target, indices);
 
-        cloud_sourceDownsampled = voxelize(cloud_sourceRemovedNaN);
-        cloud_targetDownsampled = voxelize(cloud_targetRemovedNaN);
 
-        pcl::GeneralizedIterativeClosestPoint<pcl::PointXYZRGB, pcl::PointXYZRGB> gicp;
+        //downsample clouds
+        pcl::VoxelGrid<pcl::PointXYZRGB> filter;
+        filter.setInputCloud(cloud_source);
+        filter.setLeafSize(voxelsize_, voxelsize_, voxelsize_);
+        filter.filter(*cloud_sourceDownsampled);
+
+        filter.setInputCloud(cloud_target);
+        filter.setLeafSize(voxelsize_, voxelsize_, voxelsize_);
+        filter.filter(*cloud_targetDownsampled);
+        //thread_clock::time_point start2 = thread_clock::now();
+
+        pcl::IterativeClosestPoint<pcl::PointXYZRGB, pcl::PointXYZRGB> gicp;
         gicp.setInputSource(cloud_sourceDownsampled);
         gicp.setInputTarget(cloud_targetDownsampled);
+
+        //thread_clock::time_point start3 = thread_clock::now();
 
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_source_registered(new pcl::PointCloud<pcl::PointXYZRGB>);
         gicp.align(*cloud_source_registered);
 
+        //thread_clock::time_point start4 = thread_clock::now();
+
         if(!gicp.hasConverged())
             std::cout << "Gicp does not converged! you need to reset parameters of gicp!" << std::endl;
+        //thread_clock::time_point stop = thread_clock::now();
 
-        pcl::visualization::PCLVisualizer viewer("Simple Cloud Viewer");
+        renderer_->onCloudFrame(cloud_targetDownsampled, cloud_source_registered);
 
-        viewer.addPointCloud(cloud_targetDownsampled, "target");
-        viewer.addPointCloud(cloud_source_registered, "registered");
-
-        viewer.spinOnce(1);
+        //std::cout<<"duration1: "<<duration_cast<nanoseconds>(start4-start3).count() <<std::endl;
+        //std::cout<<"duration2: "<<duration_cast<nanoseconds>(start3-start2).count() <<std::endl;
+        //std::cout<<"duration3: "<<duration_cast<nanoseconds>(start2-start).count() <<std::endl;
+        //std::cout<<"duration4: "<<duration_cast<nanoseconds>(stop-start).count() <<std::endl;
 
         return gicp.getFinalTransformation();
     }
 
 }
-
-
 
 

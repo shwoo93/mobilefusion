@@ -42,6 +42,8 @@ SET(SOURCES
     src/KinectRecorder.cpp
     src/FusionManager.cpp
     src/KinectRenderer.cpp
+    src/CloudRenderer.cpp
+    src/CloudCompareRenderer.cpp
 )
 
 link_directories(${PCL_LIBRARY_DIRS})

@@ -55,7 +55,7 @@ namespace MobileFusion{
         listener_.release(frames);
 
         for(std::vector<boost::shared_ptr<KinectFrameListener> >::iterator iter = frame_listeners_.begin(); iter!= frame_listeners_.end() ; iter++) {
-            (*iter)->OnFrame(rgb,depth);
+            (*iter)->onFrame(rgb,depth);
         }
     }
 

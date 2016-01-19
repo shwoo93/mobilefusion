@@ -6,13 +6,13 @@
 
 namespace MobileFusion {
 
-    class CloudProvider :public KinectFrameListener {
+    class CloudProvider : public KinectFrameListener {
         public:
             CloudProvider();
             ~CloudProvider();
             void setCameraIntrinsic(float cx, float cy, float fx, float fy);
             void setDecimation(int decimation);
-            void OnFrame(cv::Mat &rgb, cv::Mat &depth);
+            void onFrame(cv::Mat &rgb, cv::Mat &depth);
             void addListener(boost::shared_ptr<CloudListener> cloud_listener);
         private:
             float cx_;
