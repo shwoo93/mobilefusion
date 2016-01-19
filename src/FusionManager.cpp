@@ -8,10 +8,9 @@ using namespace boost::chrono;
 
 namespace MobileFusion {
     FusionManager::FusionManager()
-    :
-    renderer_(new CloudCompareRenderer())
-    ,voxelsize_(5.f)
-    ,tsdf_(new cpu_tsdf::TSDFVolumeOctree) {
+    : renderer_("compare")
+    , voxelsize_(5.f)
+    , tsdf_(new cpu_tsdf::TSDFVolumeOctree) {
          mat_ = Eigen::Matrix4f::Identity();
          tsdf_->setGridSize(1., 1., 1.);
          tsdf_->setResolution(128, 128, 128);
@@ -78,7 +77,7 @@ namespace MobileFusion {
             std::cout << "Gicp does not converged! you need to reset parameters of gicp!" << std::endl;
         //thread_clock::time_point stop = thread_clock::now();
 
-        renderer_->onCloudFrame(cloud_targetDownsampled, cloud_source_registered);
+        renderer_.onCloudFrame(cloud_targetDownsampled, cloud_source_registered);
 
         //std::cout<<"duration1: "<<duration_cast<nanoseconds>(start4-start3).count() <<std::endl;
         //std::cout<<"duration2: "<<duration_cast<nanoseconds>(start3-start2).count() <<std::endl;

@@ -24,7 +24,7 @@ namespace MobileFusion {
                     pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud_source,
                     pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud_target);
         private:
-            boost::shared_ptr<CloudCompareRenderer> renderer_;
+            CloudCompareRenderer renderer_;
             float voxelsize_;
             Eigen::Matrix4f mat_;
             pcl::PointCloud<pcl::PointXYZRGB> empty_cloud_;
