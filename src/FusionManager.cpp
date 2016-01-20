@@ -1,16 +1,10 @@
 #include "FusionManager.h"
 
-#include <vector>
-
 namespace MobileFusion {
     FusionManager::FusionManager()
     : renderer_("compare")
     , registerer_()
-    , tsdf_(new cpu_tsdf::TSDFVolumeOctree) {
-         tsdf_->setGridSize(1., 1., 1.);
-         tsdf_->setResolution(128, 128, 128);
-         tsdf_->setIntegrateColor(true);
-         tsdf_->reset();
+    , wrapper_() {
     }
 
     FusionManager::~FusionManager() {
@@ -26,13 +20,16 @@ namespace MobileFusion {
 
         //for first insertion
         if(!registerer_.registerPossible()) {
-            tsdf_->integrateCloud(*cloud,empty_cloud);
+            wrapper_.integrateCloud(*cloud,empty_cloud,Eigen::Affine3d::Identity());
         }
 
         //that after
         if(registerer_.registerPossible()) {
             renderer_.onCloudFrame(registerer_.getTargetDownsampled(), registerer_.getSourceRegistered());
-            tsdf_->integrateCloud(*cloud,empty_cloud,registerer_.getAffine3d(registerer_.getIcpTransformation()));
+            wrapper_.integrateCloud(*cloud,empty_cloud,registerer_.getAffine3d(registerer_.getIcpTransformation()));
         }
+
+        wrapper_.constructMesh();
     }
 }
+

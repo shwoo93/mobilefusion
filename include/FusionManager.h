@@ -12,6 +12,7 @@
 #include "CloudCompareRenderer.h"
 #include "CloudListener.h"
 #include "CloudRegister.h"
+#include "CpuTsdf.h"
 #include "KinectFrameListener.h"
 
 namespace MobileFusion {
@@ -24,7 +25,7 @@ namespace MobileFusion {
         private:
             CloudCompareRenderer renderer_;
             CloudRegister registerer_;
-            cpu_tsdf::TSDFVolumeOctree::Ptr tsdf_;
+            CpuTsdf wrapper_;
     };
 }
 #endif

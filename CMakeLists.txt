@@ -41,6 +41,7 @@ SET(SOURCES
     src/CloudProvider.cpp
     src/CloudRenderer.cpp
     src/CloudRegister.cpp
+    src/CpuTsdf.cpp
     src/FusionManager.cpp
     src/Kinect.cpp
     src/KinectRecorder.cpp
