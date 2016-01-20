@@ -9,8 +9,8 @@ int main(int argc, char **argv) {
     //boost::shared_ptr<MobileFusion::KinectRecorder> recorder(new MobileFusion::KinectRecorder());
     boost::shared_ptr<MobileFusion::KinectRenderer> renderer(new MobileFusion::KinectRenderer());
     boost::shared_ptr<MobileFusion::CloudProvider> cloud_provider(new MobileFusion::CloudProvider());
-    //boost::shared_ptr<MobileFusion::FusionManager> fusion_manager(new MobileFusion::FusionManager());
-    boost::shared_ptr<MobileFusion::CloudRenderer> cloud_renderer(new MobileFusion::CloudRenderer());
+    boost::shared_ptr<MobileFusion::FusionManager> fusion_manager(new MobileFusion::FusionManager());
+    boost::shared_ptr<MobileFusion::CloudRenderer> cloud_renderer(new MobileFusion::CloudRenderer("cloud"));
 
     //recorder->setMinFrameCount(10);
     //recorder->setMaxFrameCount(50);
@@ -19,9 +19,9 @@ int main(int argc, char **argv) {
     //kinect.addFrameListener(recorder);
     kinect.addFrameListener(renderer);
     kinect.addFrameListener(cloud_provider);
-    //kinect.addFrameListener(fusion_manager);
+    kinect.addFrameListener(fusion_manager);
 
-    //cloud_provider->addListener(fusion_manager);
+    cloud_provider->addListener(fusion_manager);
     cloud_provider->addListener(cloud_renderer);
 
     while(true) {

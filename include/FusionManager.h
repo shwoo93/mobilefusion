@@ -11,6 +11,7 @@
 
 #include "CloudCompareRenderer.h"
 #include "CloudListener.h"
+#include "CloudRegister.h"
 #include "KinectFrameListener.h"
 
 namespace MobileFusion {
@@ -20,17 +21,10 @@ namespace MobileFusion {
             ~FusionManager();
             void onFrame(cv::Mat &rgb, cv::Mat &depth);
             void onCloudFrame(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud);
-            Eigen::Matrix4f getIcpTransformation(
-                    pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud_source,
-                    pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud_target);
         private:
             CloudCompareRenderer renderer_;
-            float voxelsize_;
-            Eigen::Matrix4f mat_;
-            pcl::PointCloud<pcl::PointXYZRGB> empty_cloud_;
+            CloudRegister registerer_;
             cpu_tsdf::TSDFVolumeOctree::Ptr tsdf_;
-            std::vector<pcl::PointCloud<pcl::PointXYZRGB>::Ptr> clouds_;
     };
-
 }
 #endif

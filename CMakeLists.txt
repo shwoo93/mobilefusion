@@ -37,13 +37,14 @@ SET(LIBRARIES
 )
 
 SET(SOURCES
-    src/Kinect.cpp
-    src/CloudProvider.cpp
-    src/KinectRecorder.cpp
-    src/FusionManager.cpp
-    src/KinectRenderer.cpp
-    src/CloudRenderer.cpp
     src/CloudCompareRenderer.cpp
+    src/CloudProvider.cpp
+    src/CloudRenderer.cpp
+    src/CloudRegister.cpp
+    src/FusionManager.cpp
+    src/Kinect.cpp
+    src/KinectRecorder.cpp
+    src/KinectRenderer.cpp
 )
 
 link_directories(${PCL_LIBRARY_DIRS})
