@@ -38,6 +38,7 @@ SET(LIBRARIES
 
 SET(SOURCES
     src/CloudCompareRenderer.cpp
+    src/CloudNormalProvider.cpp
     src/CloudProvider.cpp
     src/CloudRenderer.cpp
     src/CloudRegister.cpp

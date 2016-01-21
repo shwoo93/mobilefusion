@@ -2,7 +2,8 @@
 
 namespace MobileFusion {
     FusionManager::FusionManager()
-    : renderer_("compare")
+    : normalprovider_()
+    , renderer_("compare")
     , registerer_()
     , wrapper_() {
     }
@@ -15,21 +16,20 @@ namespace MobileFusion {
     }
 
     void FusionManager::onCloudFrame(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud) {
-        pcl::PointCloud<pcl::PointXYZRGB> empty_cloud;
         registerer_.updateCloud(cloud);
 
         //for first insertion
         if(!registerer_.registerPossible()) {
-            wrapper_.integrateCloud(*cloud,empty_cloud,Eigen::Affine3d::Identity());
+            wrapper_.integrateCloud(*cloud, *(normalprovider_.getCloudNormal()), Eigen::Affine3d::Identity());
         }
 
         //that after
         if(registerer_.registerPossible()) {
             renderer_.onCloudFrame(registerer_.getTargetDownsampled(), registerer_.getSourceRegistered());
-            wrapper_.integrateCloud(*cloud,empty_cloud,registerer_.getAffine3d(registerer_.getIcpTransformation()));
+            wrapper_.integrateCloud(*cloud, *(normalprovider_.getCloudNormal()), registerer_.getAffine3d(registerer_.getIcpTransformation()));
         }
 
-        wrapper_.constructMesh();
+        //wrapper_.constructMesh();
     }
 }
 

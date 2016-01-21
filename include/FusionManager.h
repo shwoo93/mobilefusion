@@ -11,6 +11,7 @@
 
 #include "CloudCompareRenderer.h"
 #include "CloudListener.h"
+#include "CloudNormalProvider.h"
 #include "CloudRegister.h"
 #include "CpuTsdf.h"
 #include "KinectFrameListener.h"
@@ -24,6 +25,7 @@ namespace MobileFusion {
             void onCloudFrame(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud);
         private:
             CloudCompareRenderer renderer_;
+            CloudNormalProvider normalprovider_;
             CloudRegister registerer_;
             CpuTsdf wrapper_;
     };

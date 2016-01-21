@@ -12,7 +12,7 @@
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #include <pcl/PolygonMesh.h>
-
+#include <pcl/visualization/cloud_viewer.h>
 
 namespace MobileFusion {
     class CpuTsdf {
@@ -21,13 +21,14 @@ namespace MobileFusion {
             ~CpuTsdf();
             void integrateCloud(
                     const pcl::PointCloud<pcl::PointXYZRGB> &cloud,
-                    const pcl::PointCloud<pcl::PointXYZRGB> &normals,
+                    const pcl::PointCloud<pcl::Normal> &normals,
                     const Eigen::Affine3d &trnas);
             void constructMesh();
         private:
             cpu_tsdf::TSDFVolumeOctree::Ptr tsdf_;
             cpu_tsdf::MarchingCubesTSDFOctree octree_;
             pcl::PolygonMesh mesh_;
+            pcl::visualization::PCLVisualizer::Ptr vis_;
     };
 }
 
