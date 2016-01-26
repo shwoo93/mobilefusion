@@ -15,19 +15,21 @@
 #include "CloudRegister.h"
 #include "CpuTsdf.h"
 #include "KinectFrameListener.h"
+#include "CloudNormalListener.h"
 
 namespace MobileFusion {
-    class FusionManager : public CloudListener, public KinectFrameListener {
+    class FusionManager : public KinectFrameListener, public CloudListener, public CloudNormalListener {
         public:
             FusionManager();
             ~FusionManager();
             void onFrame(cv::Mat &rgb, cv::Mat &depth);
             void onCloudFrame(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud);
+            void onCloudNormalFrame(pcl::PointCloud<pcl::Normal>::Ptr normal);
         private:
             CloudCompareRenderer renderer_;
-            CloudNormalProvider normalprovider_;
             CloudRegister registerer_;
             CpuTsdf wrapper_;
+            pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_;
     };
 }
 #endif
