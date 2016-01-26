@@ -2,34 +2,39 @@
 
 namespace MobileFusion {
     FusionManager::FusionManager()
-    : normalprovider_()
-    , renderer_("compare")
+    : renderer_("compare")
     , registerer_()
-    , wrapper_() {
+    , tsdf_()
+    , cloud_() {
     }
 
     FusionManager::~FusionManager() {
     }
 
-    void FusionManager::onFrame(cv::Mat &rgb, cv::Mat &depth) {
-        std::cout<<"FusionManager_onFrame"<<std::endl;
+    void FusionManager::onFrame(const cv::Mat &rgb, const cv::Mat &depth) {
     }
 
     void FusionManager::onCloudFrame(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud) {
+        cloud_ = cloud;
+    }
+    
+    void FusionManager::onCloudNormalFrame(pcl::PointCloud<pcl::Normal>::Ptr normal) {
+        pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud = cloud_;
+
         registerer_.updateCloud(cloud);
 
         //for first insertion
         if(!registerer_.registerPossible()) {
-            wrapper_.integrateCloud(*cloud, *(normalprovider_.getCloudNormal()), Eigen::Affine3d::Identity());
+            tsdf_.integrateCloud(*cloud, *normal, Eigen::Affine3d::Identity());
         }
 
         //that after
         if(registerer_.registerPossible()) {
             renderer_.onCloudFrame(registerer_.getTargetDownsampled(), registerer_.getSourceRegistered());
-            wrapper_.integrateCloud(*cloud, *(normalprovider_.getCloudNormal()), registerer_.getAffine3d(registerer_.getIcpTransformation()));
+            tsdf_.integrateCloud(*cloud, *normal, registerer_.getAffine3d(registerer_.getIcpTransformation()));
         }
 
-        //wrapper_.constructMesh();
+        //tsdf_.constructMesh();
     }
 }
 

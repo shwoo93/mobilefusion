@@ -8,7 +8,7 @@ namespace MobileFusion {
         public:
             KinectRenderer();
             ~KinectRenderer();
-            void onFrame(cv::Mat &rgb, cv::Mat &depth);
+            void onFrame(const cv::Mat &rgb, const cv::Mat &depth);
     };
 }
 
