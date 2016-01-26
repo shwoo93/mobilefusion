@@ -31,6 +31,7 @@ int main(int argc, char **argv) {
     boost::thread kinect_thread(&MobileFusion::Kinect::run, &kinect);
 
     while(true) {
+        fusion_manager->update();
     }
 
     return 0;

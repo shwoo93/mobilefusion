@@ -7,16 +7,20 @@ namespace MobileFusion {
     : renderer_("compare")
     , registerer_()
     , tsdf_()
+    , cloud_dirty_(false)
     , cloud_() {
     }
 
     FusionManager::~FusionManager() {
     }
 
-    void FusionManager::onFrame(const cv::Mat& rgb, const cv::Mat& depth) {
-    }
+    void FusionManager::update() {
+        if(!cloud_dirty_) {
+            return;
+        }
 
-    void FusionManager::onCloudFrame(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud) {
+        pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud = cloud_;
+
         pcl::PointCloud<pcl::Normal>::Ptr normal = CloudNormalProvider::computeNormal(cloud, 5);
 
         registerer_.updateCloud(cloud);
@@ -31,8 +35,14 @@ namespace MobileFusion {
             renderer_.onCloudFrame(registerer_.getTargetDownsampled(), registerer_.getSourceRegistered());
             tsdf_.integrateCloud(*cloud, *normal, registerer_.getAffine3d(registerer_.getIcpTransformation()));
         }
+    }
 
-        //tsdf_.constructMesh();cloud_ = cloud;
+    void FusionManager::onFrame(const cv::Mat& rgb, const cv::Mat& depth) {
+            }
+
+    void FusionManager::onCloudFrame(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud) {
+        cloud_ = cloud;
+        cloud_dirty_ = true;
     }
 }
 

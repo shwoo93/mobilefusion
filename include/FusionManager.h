@@ -12,6 +12,7 @@ namespace MobileFusion {
         public:
             FusionManager();
             ~FusionManager();
+            void update();
             void onFrame(const cv::Mat &rgb, const cv::Mat &depth);
             void onCloudFrame(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud);
 
@@ -19,6 +20,7 @@ namespace MobileFusion {
             CloudCompareRenderer renderer_;
             CloudRegister registerer_;
             CpuTsdf tsdf_;
+            bool cloud_dirty_;
             pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_;
     };
 }
