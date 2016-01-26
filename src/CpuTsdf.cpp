@@ -24,7 +24,7 @@ namespace MobileFusion {
             const pcl::PointCloud<pcl::PointXYZRGB> &cloud,
             const pcl::PointCloud<pcl::Normal> &normals,
             const Eigen::Affine3d &trans) {
-        tsdf_->integrateCloud(cloud,normals,trans);
+        tsdf_->integrateCloud(cloud, normals, trans);
     }
 
     void CpuTsdf::constructMesh() {

@@ -16,10 +16,11 @@ namespace MobileFusion {
             void onFrame(const cv::Mat &rgb, const cv::Mat &depth);
             void onCloudFrame(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud);
             void onCloudNormalFrame(pcl::PointCloud<pcl::Normal>::Ptr normal);
+
         private:
             CloudCompareRenderer renderer_;
             CloudRegister registerer_;
-            CpuTsdf wrapper_;
+            CpuTsdf tsdf_;
             pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_;
     };
 }

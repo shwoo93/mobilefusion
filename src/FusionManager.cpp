@@ -4,7 +4,7 @@ namespace MobileFusion {
     FusionManager::FusionManager()
     : renderer_("compare")
     , registerer_()
-    , wrapper_()
+    , tsdf_()
     , cloud_() {
     }
 
@@ -12,7 +12,6 @@ namespace MobileFusion {
     }
 
     void FusionManager::onFrame(const cv::Mat &rgb, const cv::Mat &depth) {
-        std::cout<<"FusionManager_onFrame"<<std::endl;
     }
 
     void FusionManager::onCloudFrame(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud) {
@@ -26,16 +25,16 @@ namespace MobileFusion {
 
         //for first insertion
         if(!registerer_.registerPossible()) {
-            wrapper_.integrateCloud(*cloud, *normal, Eigen::Affine3d::Identity());
+            tsdf_.integrateCloud(*cloud, *normal, Eigen::Affine3d::Identity());
         }
 
         //that after
         if(registerer_.registerPossible()) {
             renderer_.onCloudFrame(registerer_.getTargetDownsampled(), registerer_.getSourceRegistered());
-            wrapper_.integrateCloud(*cloud, *normal, registerer_.getAffine3d(registerer_.getIcpTransformation()));
+            tsdf_.integrateCloud(*cloud, *normal, registerer_.getAffine3d(registerer_.getIcpTransformation()));
         }
 
-        //wrapper_.constructMesh();
+        //tsdf_.constructMesh();
     }
 }
 

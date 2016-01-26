@@ -1,12 +1,16 @@
 #include "Kinect.h"
 
+#include <iostream>
+
+#include <boost/chrono.hpp>
+
 #include "KinectFrameListener.h"
 
 namespace MobileFusion{
     Kinect::Kinect()
     : freenect2_()
     , listener_(libfreenect2::Frame::Color | libfreenect2::Frame::Ir | libfreenect2::Frame::Depth)
-    , pipeline_(new libfreenect2::CpuPacketPipeline())
+    , pipeline_(new libfreenect2::OpenGLPacketPipeline())
     , dev_(freenect2_.openDevice(freenect2_.getDefaultDeviceSerialNumber(), pipeline_.get()))
     , registration_()
     , frame_listeners_()
@@ -56,6 +60,7 @@ namespace MobileFusion{
             cv::cvtColor(rgba, rgb, CV_BGRA2BGR);
 
             listener_.release(frames);
+
 
             for(std::vector<boost::shared_ptr<KinectFrameListener> >::iterator iter = frame_listeners_.begin(); iter!=frame_listeners_.end() ; iter++) {
                 (*iter)->onFrame(rgb, depth);

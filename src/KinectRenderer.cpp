@@ -9,11 +9,13 @@ namespace MobileFusion {
     }
 
     KinectRenderer::~KinectRenderer() {
+        cv::destroyWindow("rgb");
+        cv::destroyWindow("depth");
     }
 
     void KinectRenderer::onFrame(const cv::Mat &rgb, const cv::Mat &depth) {
         cv::imshow("rgb", rgb);
         cv::imshow("depth", depth);
-        cv::waitKey(10);
+        cv::waitKey(1);
     }
 }
