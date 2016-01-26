@@ -7,12 +7,10 @@
 
 #include "CloudProvider.h"
 #include "CloudRenderer.h"
+#include "FusionManager.h"
 #include "Kinect.h"
 #include "KinectRecorder.h"
 #include "KinectRenderer.h"
-#include "FusionManager.h"
-
-
 
 int main(int argc, char **argv) {
     //boost::shared_ptr<MobileFusion::KinectRecorder> recorder(new MobileFusion::KinectRecorder());
@@ -36,45 +34,11 @@ int main(int argc, char **argv) {
     cloud_provider->addListener(fusion_manager);
     cloud_provider->addListener(cloud_renderer);
 
-    //start grabbing task
-    boost::thread thread1(&MobileFusion::Kinect::grabFrame, &kinect);
-    size_t bufSize;
+    //start the Kinect thread
+    boost::thread kinect_thread(&MobileFusion::Kinect::run, &kinect);
 
     while(true) {
-
-        kinect.lockMemory();
-
-        bufSize = kinect.getBufferSize();
-        std::cout<<bufSize<<std::endl;
-        if(bufSize > 0) {
-            frames = kinect.getFrames();
-            kinect.releaseBuffer();
-        }
-
-        kinect.unlockMemory();
-
-        if(bufSize > 0) {
-            kinect.processFrame(frames);
-            bufSize--;
-        }
-
-        if(kinect.getBufferSize() == 40) {
-            std::cout<<"Time of FrameProcessing is too slow"<<std::endl;
-            kinect.setGrabOn(false);
-            thread1.join();
-
-            while(!kinect.isBufferEmpty()) {
-                frames = kinect.getFrames();
-                kinect.releaseBuffer();
-                kinect.processFrame(frames);
-            }
-            break;
-        }
     }
-
-    //while(true) {
-    //	kinect.updateFrame();
-    //}
 
     return 0;
 }

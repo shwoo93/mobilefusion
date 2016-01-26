@@ -21,25 +21,12 @@ namespace MobileFusion {
         public:
             Kinect();
             ~Kinect();
-            void init();
-            //void updateFrame();
+            void run();
+            void stop();
             void addFrameListener(boost::shared_ptr<KinectFrameListener> frame_listener);
 
-            void setGrabOn(bool a);
-            size_t getBufferSize();
-            std::vector<cv::Mat> getFrames();
-            void releaseBuffer();
-            void lockMemory();
-            void unlockMemory();
-            bool isBufferEmpty();
-            void grabFrame();
-            void processFrame(std::vector<cv::Mat>& imgs);
-
         private:
-            std::queue<std::vector<cv::Mat> > buffer_;
-            std::vector<cv::Mat> matbuff_;
-            boost::mutex mtxcam_;
-            bool grab_;
+            bool stop_;
             //boost::mutex mtx_;
             libfreenect2::Freenect2 freenect2_;
             libfreenect2::SyncMultiFrameListener listener_;

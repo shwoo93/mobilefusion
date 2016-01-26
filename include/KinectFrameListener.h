@@ -1,5 +1,5 @@
-#ifndef __KINECT_FRAME_LISTENER__
-#define __KINECT_FRAME_LISTENER__
+#ifndef __KINECT_FRAME_LISTENER_H__
+#define __KINECT_FRAME_LISTENER_H__
 
 #include <opencv2/opencv.hpp>
 #include <pcl/point_cloud.h>
@@ -13,7 +13,5 @@ namespace MobileFusion {
             virtual void onFrame(cv::Mat &rgb, cv::Mat &depth) = 0;
     };
 }
-
-
 
 #endif
