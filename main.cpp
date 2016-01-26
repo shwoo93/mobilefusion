@@ -1,9 +1,18 @@
+#include <iostream>
+#include <vector>
+
+#include <boost/chrono.hpp>
+#include <boost/thread.hpp>
+#include <opencv2/opencv.hpp>
+
 #include "CloudProvider.h"
 #include "CloudRenderer.h"
 #include "Kinect.h"
 #include "KinectRecorder.h"
 #include "KinectRenderer.h"
 #include "FusionManager.h"
+
+
 
 int main(int argc, char **argv) {
     //boost::shared_ptr<MobileFusion::KinectRecorder> recorder(new MobileFusion::KinectRecorder());
@@ -16,6 +25,7 @@ int main(int argc, char **argv) {
     //recorder->setMinFrameCount(10);
     //recorder->setMaxFrameCount(50);
 
+    std::vector<cv::Mat> frames;
     MobileFusion::Kinect kinect;
     //kinect.addFrameListener(recorder);
     kinect.addFrameListener(renderer);
@@ -26,9 +36,45 @@ int main(int argc, char **argv) {
     cloud_provider->addListener(fusion_manager);
     cloud_provider->addListener(cloud_renderer);
 
+    //start grabbing task
+    boost::thread thread1(&MobileFusion::Kinect::grabFrame, &kinect);
+    size_t bufSize;
+
     while(true) {
-    	kinect.updateFrame();
+
+        kinect.lockMemory();
+
+        bufSize = kinect.getBufferSize();
+        std::cout<<bufSize<<std::endl;
+        if(bufSize > 0) {
+            frames = kinect.getFrames();
+            kinect.releaseBuffer();
+        }
+
+        kinect.unlockMemory();
+
+        if(bufSize > 0) {
+            kinect.processFrame(frames);
+            bufSize--;
+        }
+
+        if(kinect.getBufferSize() == 40) {
+            std::cout<<"Time of FrameProcessing is too slow"<<std::endl;
+            kinect.setGrabOn(false);
+            thread1.join();
+
+            while(!kinect.isBufferEmpty()) {
+                frames = kinect.getFrames();
+                kinect.releaseBuffer();
+                kinect.processFrame(frames);
+            }
+            break;
+        }
     }
+
+    //while(true) {
+    //	kinect.updateFrame();
+    //}
 
     return 0;
 }

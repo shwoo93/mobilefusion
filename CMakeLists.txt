@@ -40,13 +40,15 @@ SET(SOURCES
     src/CloudCompareRenderer.cpp
     src/CloudNormalProvider.cpp
     src/CloudProvider.cpp
-    src/CloudRenderer.cpp
     src/CloudRegister.cpp
+    src/CloudRenderer.cpp
     src/CpuTsdf.cpp
     src/FusionManager.cpp
     src/Kinect.cpp
     src/KinectRecorder.cpp
     src/KinectRenderer.cpp
+    src/Octree.cpp
+    src/TsdfVolumeOctree.cpp
 )
 
 link_directories(${PCL_LIBRARY_DIRS})

@@ -11,7 +11,6 @@ namespace MobileFusion {
             KinectFrameListener() {};
             virtual ~KinectFrameListener() {};
             virtual void onFrame(cv::Mat &rgb, cv::Mat &depth) = 0;
-            //virtual void OnCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr &cloud) = 0;
     };
 }
 
