@@ -8,7 +8,11 @@
 #include "KinectRecorder.h"
 #include "KinectRenderer.h"
 
+#include <X11/Xlib.h>
+
 int main(int argc, char **argv) {
+    XInitThreads();
+
     //boost::shared_ptr<MobileFusion::KinectRecorder> recorder(new MobileFusion::KinectRecorder());
     boost::shared_ptr<MobileFusion::KinectRenderer> renderer(new MobileFusion::KinectRenderer());
     boost::shared_ptr<MobileFusion::CloudProvider> cloud_provider(new MobileFusion::CloudProvider());

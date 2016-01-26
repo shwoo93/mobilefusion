@@ -20,20 +20,23 @@ find_package(OpenCV REQUIRED)
 find_package(PCL 1.7 REQUIRED)
 find_package(freenect2 REQUIRED)
 find_package(CPUTSDF REQUIRED)
+find_package(X11 REQUIRED)
 
 SET(INCLUDE_DIRS
     ${OpenCV_INCLUDE_DIRS}
     ${PCL_INCLUDE_DIRS}
-    ${CPUTSDF_INCLUDE_DIR}
     ${freenect2_INCLUDE_DIR}
+    ${CPUTSDF_INCLUDE_DIR}
+    ${X11_INCLUDE_DIR}
     ${MY_DIR}/include
 )
 
 SET(LIBRARIES
     ${OpenCV_LIBRARIES}
     ${PCL_LIBRARIES}
-    ${CPUTSDF_LIBRARIES}
     ${freenect2_LIBRARIES}
+    ${CPUTSDF_LIBRARIES}
+    ${X11_LIBRARIES}
 )
 
 SET(SOURCES
