@@ -1,10 +1,6 @@
-#include <iostream>
-#include <vector>
-
-#include <boost/chrono.hpp>
 #include <boost/thread.hpp>
-#include <opencv2/opencv.hpp>
 
+#include "CloudNormalProvider.h"
 #include "CloudProvider.h"
 #include "CloudRenderer.h"
 #include "FusionManager.h"
@@ -23,7 +19,6 @@ int main(int argc, char **argv) {
     //recorder->setMinFrameCount(10);
     //recorder->setMaxFrameCount(50);
 
-    std::vector<cv::Mat> frames;
     MobileFusion::Kinect kinect;
     //kinect.addFrameListener(recorder);
     kinect.addFrameListener(renderer);

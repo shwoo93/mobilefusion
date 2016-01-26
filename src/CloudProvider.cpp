@@ -15,7 +15,7 @@ namespace MobileFusion{
     CloudProvider::~CloudProvider() {
     }
 
-    void CloudProvider::onFrame(cv::Mat &rgb, cv::Mat &depth) {
+    void CloudProvider::onFrame(const cv::Mat& rgb, const cv::Mat &depth) {
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(cloudFromRgbd(rgb, depth));
         for(std::vector<boost::shared_ptr<CloudListener> >::iterator iter = cloud_listeners_.begin() ; iter != cloud_listeners_.end() ; iter++) {
             (*iter)->onCloudFrame(cloud);

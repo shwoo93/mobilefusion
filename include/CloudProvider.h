@@ -10,7 +10,7 @@ namespace MobileFusion {
         public:
             CloudProvider();
             ~CloudProvider();
-            void onFrame(cv::Mat &rgb, cv::Mat &depth);
+            void onFrame(const cv::Mat& rgb, const cv::Mat& depth);
             void addListener(boost::shared_ptr<CloudListener> cloud_listener);
 
         private:

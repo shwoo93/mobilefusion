@@ -10,7 +10,7 @@ namespace MobileFusion {
         public:
             KinectFrameListener() {};
             virtual ~KinectFrameListener() {};
-            virtual void onFrame(cv::Mat &rgb, cv::Mat &depth) = 0;
+            virtual void onFrame(const cv::Mat &rgb, const cv::Mat &depth) = 0;
     };
 }
 

@@ -11,7 +11,7 @@ namespace MobileFusion {
     FusionManager::~FusionManager() {
     }
 
-    void FusionManager::onFrame(cv::Mat &rgb, cv::Mat &depth) {
+    void FusionManager::onFrame(const cv::Mat &rgb, const cv::Mat &depth) {
         std::cout<<"FusionManager_onFrame"<<std::endl;
     }
 
