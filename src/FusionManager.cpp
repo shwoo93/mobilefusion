@@ -1,5 +1,7 @@
 #include "FusionManager.h"
 
+#include "CloudNormalProvider.h"
+
 namespace MobileFusion {
     FusionManager::FusionManager()
     : renderer_("compare")
@@ -11,15 +13,11 @@ namespace MobileFusion {
     FusionManager::~FusionManager() {
     }
 
-    void FusionManager::onFrame(const cv::Mat &rgb, const cv::Mat &depth) {
+    void FusionManager::onFrame(const cv::Mat& rgb, const cv::Mat& depth) {
     }
 
     void FusionManager::onCloudFrame(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud) {
-        cloud_ = cloud;
-    }
-    
-    void FusionManager::onCloudNormalFrame(pcl::PointCloud<pcl::Normal>::Ptr normal) {
-        pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud = cloud_;
+        pcl::PointCloud<pcl::Normal>::Ptr normal = CloudNormalProvider::computeNormal(cloud, 5);
 
         registerer_.updateCloud(cloud);
 
@@ -34,7 +32,7 @@ namespace MobileFusion {
             tsdf_.integrateCloud(*cloud, *normal, registerer_.getAffine3d(registerer_.getIcpTransformation()));
         }
 
-        //tsdf_.constructMesh();
+        //tsdf_.constructMesh();cloud_ = cloud;
     }
 }
 

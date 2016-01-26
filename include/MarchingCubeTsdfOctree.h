@@ -27,7 +27,7 @@ namespace MobileFusion {
         protected:
             void voxelizeData ();
             float getGridValue (Eigen::Vector3i pos);
-            void perfomReconstruction (pcl::PolygonMesh &output);
+            void performReconstruction (pcl::PolygonMesh &output);
             void
             reconstructVoxel (const OctreeNode *voxel,
                     pcl::PointCloud<pcl::PointXYZ> &output,

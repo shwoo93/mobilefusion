@@ -21,7 +21,7 @@ namespace MobileFusion {
         , zsize_ (3.0f)
         , max_dist_pos_ (0.03f)
         , max_dist_neg_ (0.03f)
-        , max_weight_ (100)
+        , max_weight_ (50)
         , min_sensor_dist_ (0.3f)
         , max_sensor_dist_ (3.0f)
         , focal_length_x_ (525.)
@@ -49,10 +49,6 @@ namespace MobileFusion {
     void TSDFVolumeOctree::setGlobalTransform ( const Eigen::Affine3d &trans) {
         global_transform_ = trans;
     }
-
-    //bool TSDFVolumeOctree::isEmpty() {
-    //    return is_empty_;
-    //}
 
     void TSDFVolumeOctree::setResolution (int xres, int yres, int zres) {
         xres_ = xres;

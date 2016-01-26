@@ -103,7 +103,6 @@ namespace MobileFusion {
             inline bool isEmpty() {
                 return is_empty_;
             }
-            //bool isEmpty();
 
             inline void setColorMode (const std::string &color_mode) {
                 color_mode_ = color_mode;

@@ -1,7 +1,7 @@
 #include "MarchingCubeTsdfOctree.h"
 
 namespace MobileFusion {
-    MarchingCubesTSDFOctree::setInputTSDF (TSDFVolumeOctree::ConstPtr tsdf_volume) {
+    void MarchingCubesTSDFOctree::setInputTSDF (TSDFVolumeOctree::ConstPtr tsdf_volume) {
         tsdf_volume_ = tsdf_volume;
         // Set the grid resolution so it mimics the tsdf's
         int res_x, res_y, res_z;
@@ -25,7 +25,7 @@ namespace MobileFusion {
         }
         setInputCloud (corner_cloud);
         // No extending
-        setPercentageExtenGrid (0);
+        setPercentageExtendGrid (0);
         float iso_x = 0;
         float iso_y = 0;
         float iso_z = 0;
@@ -43,7 +43,7 @@ namespace MobileFusion {
         float w;
         voxel->getData (d, w);
         if (w < w_min_ || fabs(d) >= 1)
-            return (std::number_limits<float>::quiet_NaN ());
+            return (std::numeric_limits<float>::quiet_NaN ());
         float max_dist_pos, max_dist_neg;
         tsdf_volume_->getDepthTruncationLimits (max_dist_pos, max_dist_neg);
         return (d * max_dist_neg);
@@ -62,7 +62,7 @@ namespace MobileFusion {
         }
         else {
             reconstructVoxel (root.get(), cloud);
-            pcl::transformPointCloud (cloud_colored, cloud_colored, tsdf_volume_->getGlobalTransform());
+            pcl::transformPointCloud (cloud, cloud, tsdf_volume_->getGlobalTransform());
             pcl::toPCLPointCloud2 (cloud, output.cloud);
         }
         output.polygons.resize (cloud.size () /3);
@@ -76,9 +76,9 @@ namespace MobileFusion {
         }
     }
 
-    bool MarchingCubesTSDFOctree::getValidNeighborList1d (std::vector<float> &leaf,
+    bool MarchingCubesTSDFOctree::getValidNeighborList1D (std::vector<float> &leaf,
                                                     Eigen::Vector3i &index3d) {
-        leaf = std::vector<false> (8, 0.0f);
+        leaf = std::vector<float> (8, 0.0f);
 
         leaf[0] = getGridValue (index3d);
         if (pcl_isnan (leaf[0]))
@@ -107,5 +107,53 @@ namespace MobileFusion {
         return (true);
     }
 
-    void MarchingCubesTSDFOctree::reconstructVoxel (const OctreeNode *voxel, pcl::PointCloud<pcl::PointXYZ> &output, pcl::Point
+    void MarchingCubesTSDFOctree::reconstructVoxel (const OctreeNode *voxel, pcl::PointCloud<pcl::PointXYZ> &output, pcl::PointCloud<pcl::PointXYZRGB> * output_colored) {
+        if (voxel->hasChildren ()) {
+            const std::vector <OctreeNode::Ptr> &children = voxel->getChildren ();
+            for (size_t i = 0; i < children.size (); i++) {
+                reconstructVoxel (children[i].get (), output, output_colored);
+            }
+        }
+        else {
+            float d;
+            float w;
+            voxel->getData (d, w);
+            if (w >= w_min_ && fabs (d) < 1) {
+                float x, y, z;
+                voxel->getCenter (x, y, z);
+                Eigen::Vector3i idx;
+                tsdf_volume_->getVoxelIndex (x, y, z, idx (0), idx (1), idx (2));
+                if (idx (0) <= 0 || idx (0) >= res_x_-1 ||
+                    idx (1) <= 0 || idx (1) >= res_y_-1 ||
+                    idx (2) <= 0 || idx (2) >= res_z_-1)
+                    return;
+
+                //Reconstruct
+                std::vector<float> leaf_node;
+                if (!getValidNeighborList1D (leaf_node, idx))
+                    return;
+                createSurface (leaf_node, idx, output);
+                if (output_colored != NULL) {
+                    for (size_t i = output_colored->size(); i < output.size(); ++i) {
+                        pcl::PointXYZRGB pt_rgb;
+                        pt_rgb.getVector3fMap() = output.at (i).getVector3fMap ();
+                        uint8_t r, g, b;
+                        if (color_by_confidence_) {
+                            float std_dev = (100. - voxel->w_)/100.;
+                            pt_rgb.r = std::max (0., std::min ((1-std_dev)*255., 255.));
+                            pt_rgb.g = 0;
+                            pt_rgb.b = std::max (0., std::min ((std_dev)*255., 255.));
+                        }
+                        else if (color_by_rgb_ && voxel->getRGB (r, g, b)) {
+                            pt_rgb.r = r;
+                            pt_rgb.g = g;
+                            pt_rgb.b = b;
+                        }
+                        output_colored->push_back (pt_rgb);
+                    }
+                }
+            }
+        }
+    }
+}
 
