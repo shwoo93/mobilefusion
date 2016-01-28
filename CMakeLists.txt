@@ -48,6 +48,7 @@ SET(SOURCES
     src/CpuTsdf.cpp
     src/FusionManager.cpp
     src/Kinect.cpp
+    src/KinectPngReader.cpp
     src/KinectRecorder.cpp
     src/KinectRenderer.cpp
     src/MarchingCubeTsdfOctree.cpp

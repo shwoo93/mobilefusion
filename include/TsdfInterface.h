@@ -24,11 +24,11 @@ namespace MobileFusion {
             virtual void getDepthTruncationLimits (float &max_dist_pos, float &max_dist_neg) const = 0;
             virtual void setWeightTruncationLimit (float max_weight) = 0;
             virtual float getWeightTruncationLimit () const = 0;
-            virtual void setGlobalTrnasform (const Eigen::Affine3d &trans) = 0;
+            virtual void setGlobalTransform (const Eigen::Affine3d &trans) = 0;
             virtual Eigen::Affine3d getGlobalTransform () const = 0;
-            virtual void setSensorDistanceBounds (float min_sensor_dist, float max_sensor_dist) = 0;
-            virtual void save (const std::string &filename) const = 0;
-            virtual void load (const std::string &filename) = 0;
+            virtual void setSensorDistanceBounds (float min_sensor_dist, float max_sensor_dist) const  = 0;
+            //virtual void save (const std::string &filename) const = 0;
+            //virtual void load (const std::string &filename) = 0;
             //static TSDFInterface::PTr instantiateFromFile (const std::string &filename);
             virtual bool getFxn (const pcl::PointXYZ &pt, float &val) const = 0;
             virtual bool getGradient (const pcl::PointXYZ &pt, Eigen::Vector3f &grad) const = 0;

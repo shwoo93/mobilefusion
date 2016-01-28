@@ -12,7 +12,7 @@ namespace MobileFusion {
             typedef boost::shared_ptr<TSDFVolumeOctree> Ptr;
             typedef boost::shared_ptr<const TSDFVolumeOctree> ConstPtr;
 
-            template <typename T> inline float sgn(T t) {
+            template <typename T> inline float sgn(T t) const {
                 return t > 0 ? 1 : t < 0 ? -1 : 0;
             }
 
@@ -74,14 +74,14 @@ namespace MobileFusion {
             void reset ();
             //void save (const std::string &filename) const;
             //void load (const std::string &filename);
-            bool getFxn (const pcl::PointXYZ &pt, float &val);
-            bool getGradient (const pcl::PointXYZ &pt, Eigen::Vector3f &grad);
-            bool getHessian (const pcl::PointXYZ &pt, Eigen::Matrix3f &hessian);
-            bool getFxnAndGradient (const pcl::PointXYZ &pt, float &val ,Eigen::Vector3f &grad);
+            bool getFxn (const pcl::PointXYZ &pt, float &val) const;
+            bool getGradient (const pcl::PointXYZ &pt, Eigen::Vector3f &grad) const;
+            bool getHessian (const pcl::PointXYZ &pt, Eigen::Matrix3f &hessian) const;
+            bool getFxnAndGradient (const pcl::PointXYZ &pt, float &val ,Eigen::Vector3f &grad) const;
             bool getFxnGradientAndHessian (const pcl::PointXYZ &pt,
                                        float &val,
                                        Eigen::Vector3f &grad,
-                                       Eigen::Matrix3f &hessian);
+                                       Eigen::Matrix3f &hessian) const;
             template <typename PointT, typename NormalT> bool
                 integrateCloud (const pcl::PointCloud<PointT> &cloud,
                                 const pcl::PointCloud<NormalT> &normals,

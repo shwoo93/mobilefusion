@@ -10,8 +10,7 @@ namespace MobileFusion {
             ~KinectRecorder();
             void setMinFrameCount(int min);
             void setMaxFrameCount(int max);
-            void onFrame(cv::Mat &rgb, cv::Mat &depth);
-
+            void onFrame(const cv::Mat &rgb, const cv::Mat &depth);
         private:
             int frame_count_;
             int min_;

@@ -41,14 +41,14 @@ namespace MobileFusion{
         for(int h = 0 ; h < depth.rows && h / decimation_ < static_cast<int>(cloud->height); h += decimation_) {
             for(int w = 0 ; w < depth.cols && w / decimation_ < static_cast<int>(cloud->width); w += decimation_) {
 
-                pcl::PointXYZRGB& pt = cloud->at((h / decimation_) * cloud->width + (w / decimation_));
-
+                //pcl::PointXYZRGB& pt = cloud->at((h / decimation_) * cloud->width + (w / decimation_));
+                pcl::PointXYZRGB& pt = cloud->at((w / decimation_) , (h / decimation_));
                 pt.b = rgb.at<cv::Vec3b>(h, w)[0];
                 pt.g = rgb.at<cv::Vec3b>(h, w)[1];
                 pt.r = rgb.at<cv::Vec3b>(h, w)[2];
 
-                //float depth_point = static_cast<float>(depth.at<unsigned short>(h,w)) * 0.001f;
-                float depth_point = depth.at<float>(h,w);
+                float depth_point = static_cast<float>(depth.at<unsigned short>(h,w)) * 0.001f;
+
                 pt.x = (static_cast<float>(w) - cx_) * depth_point / fx_;
                 pt.y = (static_cast<float>(h) - cy_) * depth_point / fy_;
                 pt.z = depth_point;

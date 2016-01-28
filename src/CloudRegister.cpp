@@ -3,11 +3,9 @@
 namespace MobileFusion {
 
     CloudRegister::CloudRegister()
-    : voxelsize_(5.f)
-    , registerpossible_(false)
+    : registerpossible_(false)
     , cloud1_(new pcl::PointCloud<pcl::PointXYZRGB>)
     , cloud2_(new pcl::PointCloud<pcl::PointXYZRGB>)
-    , cloud_source_registered_(new pcl::PointCloud<pcl::PointXYZRGB>)
     , transformation_(Eigen::Matrix4f::Identity()) {
 
     }
@@ -20,7 +18,8 @@ namespace MobileFusion {
         return registerpossible_;
     }
 
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr CloudRegister::getICPReadyCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud) {
+    pcl::PointCloud<pcl::PointXYZRGB>::Ptr
+    CloudRegister::getICPReadyCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud, int voxelsize) {
 
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_Downsampled(new pcl::PointCloud<pcl::PointXYZRGB>);
         std::vector<int> indices;
@@ -28,7 +27,7 @@ namespace MobileFusion {
 
         pcl::VoxelGrid<pcl::PointXYZRGB> filter;
         filter.setInputCloud(cloud);
-        filter.setLeafSize(voxelsize_, voxelsize_, voxelsize_);
+        filter.setLeafSize(voxelsize, voxelsize, voxelsize);
         filter.filter(*cloud_Downsampled);
 
         return cloud_Downsampled;
@@ -40,20 +39,21 @@ namespace MobileFusion {
 
         rendererInput_.clear();
         pcl::IterativeClosestPoint<pcl::PointXYZRGB, pcl::PointXYZRGB> icp;
-
+        //icp.setMaximumIterations(25);
+        //icp.setMaxCorrespondenceDistance (maxCorrespondenceDistance);
         icp.setInputTarget (cloud_target);
         icp.setInputSource (cloud_source);
 
-        //icp.setMaxCorrespondenceDistance (maxCorrespondenceDistance);
-        //icp.setMaximumIterations(maximumIterations);
+        pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_source_registered(new pcl::PointCloud<pcl::PointXYZRGB>);
+        icp.align(*cloud_source_registered);
 
-        icp.align(*cloud_source_registered_);
-
+        if(icp.hasConverged())
+            std::cout<<icp.getFitnessScore()<<std::endl;
         if(!icp.hasConverged())
             std::cout<<"Icp does not converged! you need to reset parameters of icp!" <<std::endl;
 
         rendererInput_.push_back(cloud_target);
-        rendererInput_.push_back(cloud_source_registered_);
+        rendererInput_.push_back(cloud_source_registered);
 
         transformation_*=icp.getFinalTransformation();
     }
@@ -61,11 +61,11 @@ namespace MobileFusion {
     void CloudRegister::updateCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud) {
         //just for first insertion
         if(cloud1_->empty() &&cloud2_->empty() ) {
-            cloud1_ = getICPReadyCloud(cloud);
+            cloud1_ = getICPReadyCloud(cloud,5.f);
         }
 
         else if(!(cloud1_->empty()) && cloud2_->empty()) {
-            cloud2_ = getICPReadyCloud(cloud);
+            cloud2_ = getICPReadyCloud(cloud,5.f);
             this->ICP(cloud2_, cloud1_);
             cloud1_= cloud2_;
             cloud2_->clear();
@@ -106,3 +106,4 @@ namespace MobileFusion {
         return affine;
     }
 }
+

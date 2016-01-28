@@ -2,8 +2,6 @@
 
 #include <iostream>
 
-#include <boost/chrono.hpp>
-
 #include "KinectFrameListener.h"
 
 namespace MobileFusion{
@@ -60,7 +58,6 @@ namespace MobileFusion{
             cv::cvtColor(rgba, rgb, CV_BGRA2BGR);
 
             listener_.release(frames);
-
 
             for(std::vector<boost::shared_ptr<KinectFrameListener> >::iterator iter = frame_listeners_.begin(); iter!=frame_listeners_.end() ; iter++) {
                 (*iter)->onFrame(rgb, depth);

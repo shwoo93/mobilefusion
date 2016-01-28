@@ -14,6 +14,9 @@
 #include <pcl/PolygonMesh.h>
 #include <pcl/visualization/cloud_viewer.h>
 
+#include <pcl/io/ply_io.h>
+#include <pcl/io/vtk_lib_io.h>
+
 namespace MobileFusion {
     class CpuTsdf {
         public:
@@ -23,11 +26,14 @@ namespace MobileFusion {
                     const pcl::PointCloud<pcl::PointXYZRGB> &cloud,
                     const pcl::PointCloud<pcl::Normal> &normals,
                     const Eigen::Affine3d &trnas);
+            pcl::PointCloud<pcl::PointNormal>::Ptr renderView(
+                    const Eigen::Affine3d &trans, int downsampleBy);
+            pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr renderColoredView(
+                    const Eigen::Affine3d &trans, int downsampleBy);
             void constructMesh();
         private:
             cpu_tsdf::TSDFVolumeOctree::Ptr tsdf_;
             cpu_tsdf::MarchingCubesTSDFOctree octree_;
-            pcl::PolygonMesh mesh_;
             pcl::visualization::PCLVisualizer::Ptr vis_;
     };
 }

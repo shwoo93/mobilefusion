@@ -20,7 +20,9 @@ namespace MobileFusion {
             ~CloudRegister();
             bool registerPossible();
             void updateCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud);
-            pcl::PointCloud<pcl::PointXYZRGB>::Ptr getICPReadyCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud);
+            pcl::PointCloud<pcl::PointXYZRGB>::Ptr getICPReadyCloud(
+                    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud,
+                    int voxelsize);
             void ICP(
                     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_source,
                     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_target);//Affine3d?
@@ -29,12 +31,10 @@ namespace MobileFusion {
             Eigen::Matrix4f getIcpTransformation();
             Eigen::Affine3d getAffine3d(Eigen::Matrix4f T);
         private:
-            float voxelsize_;
             bool registerpossible_;
             pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud1_;//targetDownsampled
             pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud2_;//sourceDownsampled
             std::vector<pcl::PointCloud<pcl::PointXYZRGB>::Ptr> rendererInput_;
-            pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_source_registered_;
             Eigen::Matrix4f transformation_;
     };
 }

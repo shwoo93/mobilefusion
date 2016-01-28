@@ -13,30 +13,30 @@ using std::endl;
 
 namespace MobileFusion {
     TSDFVolumeOctree::TSDFVolumeOctree()
-        : xres_ (512)
-        , yres_ (512)
-        , zres_ (512)
-        , xsize_ (3.0f)
-        , ysize_ (3.0f)
-        , zsize_ (3.0f)
+        : xres_ (128)
+        , yres_ (128)
+        , zres_ (128)
+        , xsize_ (1.0f)
+        , ysize_ (1.0f)
+        , zsize_ (1.0f)
         , max_dist_pos_ (0.03f)
         , max_dist_neg_ (0.03f)
         , max_weight_ (50)
         , min_sensor_dist_ (0.3f)
         , max_sensor_dist_ (3.0f)
-        , focal_length_x_ (525.)
-        , focal_length_y_ (525.)
-        , principal_point_x_ (320)
-        , principal_point_y_ (240)
-        , image_width_ (640)
-        , image_height_ (480)
-        , max_cell_size_x_ (0.5f)
-        , max_cell_size_y_ (0.5f)
-        , max_cell_size_z_ (0.5f)
+        , focal_length_x_ (540.686f)
+        , focal_length_y_ (540.686f)
+        , principal_point_x_ (256.0f)
+        , principal_point_y_ (212.0f)
+        , image_width_ (512)
+        , image_height_ (424)
+        , max_cell_size_x_ (0.25f)
+        , max_cell_size_y_ (0.25f)
+        , max_cell_size_z_ (0.25f)
         , UNOBSERVED_VOXEL (std::numeric_limits<float>::quiet_NaN ())
         , weight_by_depth_ (false)
         , weight_by_variance_ (false)
-        , integrate_color_ (false)
+        , integrate_color_ (true)
         , color_mode_ ("RGB")
         , use_trilinear_interpolation_ (false)
         , num_random_splits_ (1) {
@@ -461,7 +461,7 @@ namespace MobileFusion {
         }
     }
 
-    bool TSDFVolumeOctree::getFxn (const pcl::PointXYZ &pt, float &val) {
+    bool TSDFVolumeOctree::getFxn (const pcl::PointXYZ &pt, float &val) const {
         std::vector<const OctreeNode*> neighbors;
         std::vector<pcl::PointXYZ> centers;
         if (!getNeighbors (pt, neighbors, centers))
@@ -478,7 +478,7 @@ namespace MobileFusion {
         return true;
     }
 
-    bool TSDFVolumeOctree::getGradient (const pcl::PointXYZ &pt, Eigen::Vector3f &grad)  {
+    bool TSDFVolumeOctree::getGradient (const pcl::PointXYZ &pt, Eigen::Vector3f &grad) const  {
         std::vector<const OctreeNode*> neighbors;
         std::vector<pcl::PointXYZ> centers;
         if (!getNeighbors (pt, neighbors, centers))
@@ -497,7 +497,7 @@ namespace MobileFusion {
         return (true);
     }
 
-    bool TSDFVolumeOctree::getHessian (const pcl::PointXYZ &pt, Eigen::Matrix3f &hessian)  {
+    bool TSDFVolumeOctree::getHessian (const pcl::PointXYZ &pt, Eigen::Matrix3f &hessian) const  {
         std::vector<const OctreeNode *> neighbors;
         std::vector<pcl::PointXYZ> centers;
         if (!getNeighbors (pt, neighbors, centers))
@@ -518,7 +518,7 @@ namespace MobileFusion {
         return (true);
     }
 
-    bool TSDFVolumeOctree::getFxnAndGradient (const pcl::PointXYZ &pt, float &val, Eigen::Vector3f &grad) {
+    bool TSDFVolumeOctree::getFxnAndGradient (const pcl::PointXYZ &pt, float &val, Eigen::Vector3f &grad) const {
         std::vector<const OctreeNode*> neighbors;
         std::vector<pcl::PointXYZ> centers;
         if (!getNeighbors (pt, neighbors, centers))
@@ -545,7 +545,7 @@ namespace MobileFusion {
             const pcl::PointXYZ &pt,
             float &val,
             Eigen::Vector3f &grad,
-            Eigen::Matrix3f &hessian) {
+            Eigen::Matrix3f &hessian) const {
         std::vector<const OctreeNode*> neighbors;
         std::vector<pcl::PointXYZ> centers;
         if (!getNeighbors (pt, neighbors, centers))
