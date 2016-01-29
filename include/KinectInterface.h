@@ -2,7 +2,8 @@
 #define __KINECT_INTERFACE_H__
 
 #include <boost/shared_ptr.hpp>
-#include <opencv2/opencv.hpp>
+#include <opencv2/core/core.hpp>
+#include <opencv2/highgui/highgui.hpp>
 
 #include "KinectFrameListener.h"
 

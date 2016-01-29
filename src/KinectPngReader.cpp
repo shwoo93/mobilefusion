@@ -1,8 +1,5 @@
 #include "KinectPngReader.h"
 
-#include <sys/stat.h>
-#include <unistd.h>
-
 #include "boost/format.hpp"
 
 
@@ -13,24 +10,21 @@ namespace MobileFusion{
     , frame_count_ (1) {
     }
 
-    bool KinectPngReader::is_file_exist (const std::string& name) {
-        struct stat buffer;
-        return stat (name.c_str(), &buffer) == 0;
-    }
-
     KinectPngReader::~KinectPngReader() {
     }
 
     void KinectPngReader::run() {
         while (!stop_) {
             std::string rgbimage_ = str(boost::format("/home/vllab/Desktop/images/rgb/kinect_rgb%1%.png") % frame_count_);
-            std::string depthimage_ = str(boost::format("/home/vllab/Desktop/imgaes/depth/kinect_depth%1%.png") % frame_count_);
-
-            if(!is_file_exist (rgbimage_) || !is_file_exist (depthimage_))
-                break;
+            std::string depthimage_ = str(boost::format("/home/vllab/Desktop/images/depth/kinect_depth%1%.png") % frame_count_);
 
             cv::Mat rgb = cv::imread(rgbimage_, 1);
             cv::Mat depth = cv::imread(depthimage_, 0);
+
+            if (rgb.empty() || depth.empty()) {
+                std::cout<<"Could not open or find the image"<<std::endl;
+                break;
+            }
 
             for(std::vector<boost::shared_ptr<KinectFrameListener> >::iterator iter = frame_listeners_.begin(); iter!= frame_listeners_.end(); ++iter) {
                 (*iter)->onFrame (rgb, depth);

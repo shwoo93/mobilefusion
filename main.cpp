@@ -45,9 +45,9 @@ int main(int argc, char **argv) {
     //start the Kinect thread
     //boost::thread kinect_thread(&MobileFusion::Kinect::run, &kinect);
 
-    while(true) {
-        //fusion_manager->update();
-    }
+    //while(true) {
+    //    //fusion_manager->update();
+    //}
 
     return 0;
 }
