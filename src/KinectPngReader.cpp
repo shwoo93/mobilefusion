@@ -2,6 +2,7 @@
 
 #include "boost/format.hpp"
 
+#include "KinectFrameListener.h"
 
 namespace MobileFusion{
     KinectPngReader::KinectPngReader()

@@ -51,8 +51,8 @@ SET(SOURCES
     src/KinectPngReader.cpp
     src/KinectRecorder.cpp
     src/KinectRenderer.cpp
-    src/MarchingCubeTsdfOctree.cpp
     src/Octree.cpp
+    src/OctreeNode.cpp
     src/TsdfVolumeOctree.cpp
 )
 

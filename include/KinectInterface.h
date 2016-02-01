@@ -5,9 +5,8 @@
 #include <opencv2/core/core.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
-#include "KinectFrameListener.h"
-
 namespace MobileFusion {
+    class KinectFrameListener;
 
     class KinectInterface {
         public:

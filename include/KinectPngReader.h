@@ -5,10 +5,11 @@
 
 #include <string>
 
-#include "KinectFrameListener.h"
+//#include "KinectFrameListener.h"
 #include "KinectInterface.h"
 
 namespace MobileFusion {
+    class KinectFrameListener;
 
     class KinectPngReader : public KinectInterface {
         public:

@@ -10,9 +10,7 @@ namespace MobileFusion {
     , tsdf_()
     , cloud_dirty_(false)
     , cloud_()
-    , tsdfoctree_ ()
     , viewer_("Test") {
-        tsdfoctree_.reset();
     }
 
     FusionManager::~FusionManager() {

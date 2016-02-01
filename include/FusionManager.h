@@ -7,10 +7,6 @@
 #include "CpuTsdf.h"
 #include "KinectFrameListener.h"
 
-#include "TsdfVolumeOctree.h"
-#include "TsdfVolumeOctree.hpp"
-#include "MarchingCubeTsdfOctree.h"
-
 #include <boost/thread.hpp>
 namespace MobileFusion {
     class FusionManager : public KinectFrameListener, public CloudListener {
@@ -24,7 +20,6 @@ namespace MobileFusion {
         private:
             CloudCompareRenderer renderer_;
             CloudRegister registerer_;
-            TSDFVolumeOctree tsdfoctree_;
             //MarchingCubesTSDFOctree mc_;
             CpuTsdf tsdf_;
             bool cloud_dirty_;
