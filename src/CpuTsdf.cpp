@@ -6,10 +6,10 @@ namespace MobileFusion {
     , octree_()
     , vis_(new pcl::visualization::PCLVisualizer) {
         tsdf_->setGridSize(1., 1., 1.);
-        tsdf_->setResolution(128, 128, 128);
+        tsdf_->setResolution(64, 64, 64);
         tsdf_->setImageSize(512, 424);
         tsdf_->setCameraIntrinsics(540.686f, 540.686f, 256.0f, 212.0f);
-        tsdf_->setIntegrateColor(false);
+        tsdf_->setIntegrateColor(true);
         //tsdf_->setWeightTruncationLimit(50.f);
         tsdf_->reset();
         octree_.setMinWeight(2);
@@ -36,7 +36,7 @@ namespace MobileFusion {
     pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr CpuTsdf::renderColoredView(
             const Eigen::Affine3d &trans, int downsampleBy) {
         pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZRGBNormal>);
-        cloud = tsdf_->renderColoredView (trans, downsampleBy);
+        cloud = tsdf_->renderColoredView (trans, 5);
         return cloud;
     }
 

@@ -23,33 +23,33 @@ int main(int argc, char **argv) {
     //recorder->setMinFrameCount(10);
     //recorder->setMaxFrameCount(500);
 
-    //MobileFusion::Kinect kinect;
+    MobileFusion::Kinect kinect;
     //kinect.addFrameListener(recorder);
-    //kinect.addFrameListener(renderer);
-    //kinect.addFrameListener(cloud_provider);
-    //kinect.addFrameListener(fusion_manager);
+    kinect.addFrameListener(renderer);
+    kinect.addFrameListener(cloud_provider);
+    kinect.addFrameListener(fusion_manager);
 
     //kinect_pngreader
-    MobileFusion::KinectPngReader kinect_pngreader;
-    kinect_pngreader.addFrameListener(renderer);
-    kinect_pngreader.addFrameListener(cloud_provider);
-    kinect_pngreader.addFrameListener(fusion_manager);
+    //MobileFusion::KinectPngReader kinect_pngreader;
+    //kinect_pngreader.addFrameListener(renderer);
+    //kinect_pngreader.addFrameListener(cloud_provider);
+    //kinect_pngreader.addFrameListener(fusion_manager);
 
     cloud_provider->addListener(fusion_manager);
     cloud_provider->addListener(cloud_renderer);
 
-    kinect_pngreader.run();
+    //kinect_pngreader.run();
     //boost::thread kinect_png_thread(&MobileFusion::KinectPngReader::run, &kinect_pngreader);
     //kinect_png_thread.join();
 
 
     //start the Kinect thread
-    //boost::thread kinect_thread(&MobileFusion::Kinect::run, &kinect);
+    boost::thread kinect_thread(&MobileFusion::Kinect::run, &kinect);
     //kinect_thread.join();
 
-    //while(true) {
-    //    fusion_manager->update();
-    //}
+    while(true) {
+        fusion_manager->update();
+    }
 
     return 0;
 }

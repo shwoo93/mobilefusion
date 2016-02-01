@@ -4,8 +4,10 @@
 #include "CloudCompareRenderer.h"
 #include "CloudListener.h"
 #include "CloudRegister.h"
-#include "CpuTsdf.h"
+//#include "CpuTsdf.h"
 #include "KinectFrameListener.h"
+
+#include "TsdfVolumeOctree.h"
 
 #include <boost/thread.hpp>
 namespace MobileFusion {
@@ -20,12 +22,11 @@ namespace MobileFusion {
         private:
             CloudCompareRenderer renderer_;
             CloudRegister registerer_;
+            //CpuTsdf tsdf_;
             bool cloud_dirty_;
-            int update_count_;
-            //MarchingCubesTSDFOctree mc_;
-            CpuTsdf tsdf_;
             pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_;
-            pcl::visualization::PCLVisualizer viewer_;
+            int update_count_;
+            TSDFVolumeOctree octree_;
     };
 }
 #endif

@@ -21,26 +21,27 @@ namespace MobileFusion {
         pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr target_downsampled(new pcl::PointCloud<pcl::PointXYZRGBNormal>);
 
         std::vector<int> indices;
-        pcl::removeNaNFromPointCloud(*source_cloud_, *source_cloud_, indices);
-        pcl::removeNaNFromPointCloud(*target_cloud_, *target_cloud_, indices);
+        pcl::removeNaNFromPointCloud (*source_cloud_, *source_cloud_, indices);
+        pcl::removeNaNFromPointCloud (*target_cloud_, *target_cloud_, indices);
 
         pcl::VoxelGrid<pcl::PointXYZRGBNormal> filter;
-        filter.setInputCloud(source_cloud_);
-        filter.setLeafSize(voxelsize, voxelsize, voxelsize);
-        filter.filter(*source_downsampled);
+        filter.setInputCloud (source_cloud_);
+        filter.setLeafSize (voxelsize, voxelsize, voxelsize);
+        filter.filter (*source_downsampled);
 
-        filter.setInputCloud(target_cloud_);
-        filter.setLeafSize(voxelsize, voxelsize, voxelsize);
-        filter.filter(*target_downsampled);
+        filter.setInputCloud (target_cloud_);
+        filter.setLeafSize (voxelsize, voxelsize, voxelsize);
+        filter.filter (*target_downsampled);
 
         pcl::IterativeClosestPoint<pcl::PointXYZRGBNormal, pcl::PointXYZRGBNormal> icp;
-        icp.setMaximumIterations(25);
+        icp.setMaxCorrespondenceDistance (10000);
+        icp.setMaximumIterations (100);
 
         icp.setInputTarget (target_downsampled);
         icp.setInputSource (source_downsampled);
 
         pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr source_registered(new pcl::PointCloud<pcl::PointXYZRGBNormal>);
-        icp.align(*source_registered);
+        icp.align (*source_registered);
 
 
         cloud_target_downsampled = target_downsampled;

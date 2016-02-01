@@ -14,7 +14,7 @@ namespace MobileFusion {
     public:
         CloudCompareRenderer(std::string name);
         ~CloudCompareRenderer();
-        void onCloudFrame(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud1, pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud2);
+        void onCloudFrame(pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr cloud1, pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr cloud2);
     private:
         pcl::visualization::PCLVisualizer viewer_;
     };
