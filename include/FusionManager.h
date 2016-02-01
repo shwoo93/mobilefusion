@@ -20,11 +20,11 @@ namespace MobileFusion {
         private:
             CloudCompareRenderer renderer_;
             CloudRegister registerer_;
+            bool cloud_dirty_;
+            int update_count_;
             //MarchingCubesTSDFOctree mc_;
             CpuTsdf tsdf_;
-            bool cloud_dirty_;
             pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_;
-
             pcl::visualization::PCLVisualizer viewer_;
     };
 }

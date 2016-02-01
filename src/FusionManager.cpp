@@ -10,47 +10,68 @@ namespace MobileFusion {
     , tsdf_()
     , cloud_dirty_(false)
     , cloud_()
-    , viewer_("Test") {
+    , viewer_("Test")
+    , update_count_ (0) {
     }
+
 
     FusionManager::~FusionManager() {
     }
 
     void FusionManager::update() {
-        if(!cloud_dirty_) {
-            return;
-        }
 
         //pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud = cloud_;
-        pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZRGB>);
-        cloud.reset(new pcl::PointCloud<pcl::PointXYZRGB>(*cloud_));
+        //cloud_dirty_ = false;
+
+        //pcl::PointCloud<pcl::Normal>::Ptr normal = CloudNormalProvider::computeNormal(cloud, 5);
+
+        //registerer_.updateCloud(cloud);
+
+        ////pcl::PointCloud<pcl::PointNormal>::Ptr raytraced (new pcl::PointCloud<pcl::PointNormal>);
+
+        //if(!registerer_.registerPossible()) {
+        //    tsdf_.integrateCloud(*cloud, *normal);
+        //}
+
+        //if(registerer_.registerPossible()) {
+        //    renderer_.onCloudFrame(registerer_.getTargetDownsampled(), registerer_.getSourceRegistered());
+        //    tsdf_.integrateCloud(*cloud, *normal, registerer_.getAffine3d(registerer_.getIcpTransformation()));
+        //}
+
+        if(!cloud_dirty_)
+            return;
+
+        ++update_count_;
+
+        pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud = cloud_;
         cloud_dirty_ = false;
 
-        pcl::PointCloud<pcl::Normal>::Ptr normal = CloudNormalProvider::computeNormal(cloud, 5);
+        pcl::PointCloud<pcl::Normal>::Ptr normal = CloudNormalProvider::computeNormal(cloud,5);
+        pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr cloudConcatenated (new pcl::PointCloud<pcl::PointXYZRGBNormal>);
+        pcl::concatenateFields (*cloud, *normal, *cloudConcatenated);
 
-        registerer_.updateCloud(cloud);
+        pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr raytraced (new pcl::PointCloud<pcl::PointXYZRGBNormal>);
 
-        //pcl::PointCloud<pcl::PointNormal>::Ptr raytraced (new pcl::PointCloud<pcl::PointNormal>);
-        //for first insertion
-        if(!registerer_.registerPossible()) {
-            tsdf_.integrateCloud(*cloud, *normal, Eigen::Affine3d::Identity());
-            // tsdfoctree_.integrateCloud(*cloud, *normal, Eigen::Affine3d::Identity());
+        //first time
+        if(update_count_ == 1) {
+            tsdf_.integrateCloud (*cloud, *normal);
+            raytraced = tsdf_.renderColoredView ();
+            registerer_.setSourceCloud (raytraced);
         }
 
-        //that after
-        if(registerer_.registerPossible()) {
-            renderer_.onCloudFrame(registerer_.getTargetDownsampled(), registerer_.getSourceRegistered());
-            tsdf_.integrateCloud(*cloud, *normal, registerer_.getAffine3d(registerer_.getIcpTransformation()));
+        else {
+            registerer_.setTargetCloud (cloudConcatenated);
+
+            pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr cloud_target_downsampled (new pcl::PointCloud<pcl::PointXYZRGBNormal>);
+            pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr cloud_source_downsampled (new pcl::PointCloud<pcl::PointXYZRGBNormal>);
+
+            registerer_.getIcpResultCloud (5.f, cloud_target_downsampled, cloud_source_downsampled);
+            //renderer_.oncloudframe(targetdownsampled, sourceregistered)
+            tsdf_.integrateCloud (*cloud, *normal, registerer_.getCameraPose ().inverse ());
+            raytraced = tsdf_.renderColoredView (registerer_.getCameraPose().inverse ());
+            registerer_.setSourceCloud (raytraced);
         }
 
-        std::cout<<"out out"<<std::endl;
-        //pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr raytraced =  tsdf_.renderColoredView (registerer_.getAffine3d(registerer_.getIcpTransformation()),1);
-        //pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGBNormal> rgb(raytraced);
-        //viewer_.addPointCloud<pcl::PointXYZRGBNormal> (raytraced,"test");
-        //viewer_.spinOnce();
-        //viewer_.spinOnce(1);
-        //viewer_.removePointCloud("test");
-        //tsdf_.constructMesh();
     }
 
     void FusionManager::onFrame(const cv::Mat& rgb, const cv::Mat& depth) {

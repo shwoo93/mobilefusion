@@ -3,107 +3,77 @@
 namespace MobileFusion {
 
     CloudRegister::CloudRegister()
-    : registerpossible_(false)
-    , cloud1_(new pcl::PointCloud<pcl::PointXYZRGB>)
-    , cloud2_(new pcl::PointCloud<pcl::PointXYZRGB>)
-    , transformation_(Eigen::Matrix4f::Identity()) {
-
+    : source_cloud_(new pcl::PointCloud<pcl::PointXYZRGBNormal>)
+    , target_cloud_(new pcl::PointCloud<pcl::PointXYZRGBNormal>) {
+        global_transform_ = Eigen::Matrix4f::Identity();
     }
 
     CloudRegister::~CloudRegister() {
 
     }
 
-    bool CloudRegister::registerPossible() {
-        return registerpossible_;
-    }
+    void CloudRegister::getIcpResultCloud(
+            int voxelsize,
+            pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr& cloud_target_downsampled,
+            pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr& cloud_source_registered) {
 
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr
-    CloudRegister::getICPReadyCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud, int voxelsize) {
+        pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr source_downsampled(new pcl::PointCloud<pcl::PointXYZRGBNormal>);
+        pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr target_downsampled(new pcl::PointCloud<pcl::PointXYZRGBNormal>);
 
-        pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_Downsampled(new pcl::PointCloud<pcl::PointXYZRGB>);
         std::vector<int> indices;
-        pcl::removeNaNFromPointCloud(*cloud, *cloud, indices);
+        pcl::removeNaNFromPointCloud(*source_cloud_, *source_cloud_, indices);
+        pcl::removeNaNFromPointCloud(*target_cloud_, *target_cloud_, indices);
 
-        pcl::VoxelGrid<pcl::PointXYZRGB> filter;
-        filter.setInputCloud(cloud);
+        pcl::VoxelGrid<pcl::PointXYZRGBNormal> filter;
+        filter.setInputCloud(source_cloud_);
         filter.setLeafSize(voxelsize, voxelsize, voxelsize);
-        filter.filter(*cloud_Downsampled);
+        filter.filter(*source_downsampled);
 
-        return cloud_Downsampled;
-    }
+        filter.setInputCloud(target_cloud_);
+        filter.setLeafSize(voxelsize, voxelsize, voxelsize);
+        filter.filter(*target_downsampled);
 
-    void CloudRegister::ICP(
-            pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_source,
-            pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_target) {
+        pcl::IterativeClosestPoint<pcl::PointXYZRGBNormal, pcl::PointXYZRGBNormal> icp;
+        icp.setMaximumIterations(25);
 
-        rendererInput_.clear();
-        pcl::IterativeClosestPoint<pcl::PointXYZRGB, pcl::PointXYZRGB> icp;
-        //icp.setMaximumIterations(25);
-        //icp.setMaxCorrespondenceDistance (maxCorrespondenceDistance);
-        icp.setInputTarget (cloud_target);
-        icp.setInputSource (cloud_source);
+        icp.setInputTarget (target_downsampled);
+        icp.setInputSource (source_downsampled);
 
-        pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_source_registered(new pcl::PointCloud<pcl::PointXYZRGB>);
-        icp.align(*cloud_source_registered);
+        pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr source_registered(new pcl::PointCloud<pcl::PointXYZRGBNormal>);
+        icp.align(*source_registered);
+
+
+        cloud_target_downsampled = target_downsampled;
+        cloud_source_registered = source_registered;
 
         if(icp.hasConverged())
             std::cout<<icp.getFitnessScore()<<std::endl;
         if(!icp.hasConverged())
             std::cout<<"Icp does not converged! you need to reset parameters of icp!" <<std::endl;
 
-        rendererInput_.push_back(cloud_target);
-        rendererInput_.push_back(cloud_source_registered);
-
-        transformation_*=icp.getFinalTransformation();
+        global_transform_ *= icp.getFinalTransformation ();
     }
 
-    void CloudRegister::updateCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud) {
-        //just for first insertion
-        if(cloud1_->empty() &&cloud2_->empty() ) {
-            cloud1_ = getICPReadyCloud(cloud,5.f);
-        }
-
-        else if(!(cloud1_->empty()) && cloud2_->empty()) {
-            cloud2_ = getICPReadyCloud(cloud,5.f);
-            this->ICP(cloud2_, cloud1_);
-            cloud1_= cloud2_;
-            cloud2_->clear();
-            if(registerpossible_!=true)
-                registerpossible_ = true;
-        }
-
-        else {
-            std::cout<<"cloud packing failed"<<std::endl;
-        }
+    Eigen::Affine3d CloudRegister::getCameraPose() {
+        Eigen::Matrix4d CameraPose_4d (global_transform_.cast<double> ());
+        Eigen::Affine3d CameraPose (CameraPose_4d);
+        return CameraPose;
     }
 
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr CloudRegister::getTargetDownsampled() {
-        if(rendererInput_.size()==2) {
-            return rendererInput_[0];
-        }
-        else {
-            std::cout<<"Input insufficient"<<std::endl;
-        }
+    void CloudRegister::setSourceCloud (pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr cloud) {
+        source_cloud_ = cloud;
     }
 
-    pcl::PointCloud<pcl::PointXYZRGB>::Ptr CloudRegister::getSourceRegistered() {
-        if(rendererInput_.size()==2) {
-            return rendererInput_[1];
-        }
-        else {
-            std::cout<<"Input insufficient"<<std::endl;
-        }
+    void CloudRegister::setTargetCloud (pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr cloud) {
+        target_cloud_ = cloud;
     }
 
-    Eigen::Matrix4f CloudRegister::getIcpTransformation() {
-        return transformation_;
+    void CloudRegister::getSourceCloud (pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr& cloud) const {
+        cloud = source_cloud_;
     }
 
-    Eigen::Affine3d CloudRegister::getAffine3d(Eigen::Matrix4f T) {
-        Eigen::Matrix4d T_4d(T.cast<double>());
-        Eigen::Affine3d affine(T_4d);
-        return affine;
+    void CloudRegister::getTargetCloud (pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr& cloud) const {
+        cloud = target_cloud_;
     }
 }
 

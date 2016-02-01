@@ -1,6 +1,7 @@
 #ifndef __CLOUD_REGISTER_H__
 #define __CLOUD_REGISTER_H__
 
+#include <assert.h>
 #include <vector>
 
 #include <pcl/filters/extract_indices.h>
@@ -18,24 +19,30 @@ namespace MobileFusion {
         public :
             CloudRegister();
             ~CloudRegister();
-            bool registerPossible();
-            void updateCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud);
-            pcl::PointCloud<pcl::PointXYZRGB>::Ptr getICPReadyCloud(
-                    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud,
-                    int voxelsize);
-            void ICP(
-                    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_source,
-                    pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_target);//Affine3d?
-            pcl::PointCloud<pcl::PointXYZRGB>::Ptr getTargetDownsampled();
-            pcl::PointCloud<pcl::PointXYZRGB>::Ptr getSourceRegistered();
-            Eigen::Matrix4f getIcpTransformation();
-            Eigen::Affine3d getAffine3d(Eigen::Matrix4f T);
+
+            void getIcpResultCloud(
+                    int voxelsize,
+                    pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr& cloud_target_downsampled,
+                    pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr& cloud_source_registered);
+
+            Eigen::Affine3d getCameraPose();
+
+            void setSourceCloud(pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr cloud);
+
+            void setTargetCloud(pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr cloud);
+
+            void getSourceCloud(pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr& cloud) const;
+
+            void getTargetCloud(pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr& cloud) const;
+
         private:
-            bool registerpossible_;
-            pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud1_;//targetDownsampled
-            pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud2_;//sourceDownsampled
-            std::vector<pcl::PointCloud<pcl::PointXYZRGB>::Ptr> rendererInput_;
-            Eigen::Matrix4f transformation_;
+            std::vector<pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr> rendererInput_;
+
+            pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr source_cloud_;
+
+            pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr target_cloud_;
+
+            Eigen::Matrix4f global_transform_;
     };
 }
 #endif
