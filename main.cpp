@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
     boost::shared_ptr<MobileFusion::CloudRenderer> cloud_renderer(new MobileFusion::CloudRenderer("cloud"));
 
     //recorder->setMinFrameCount(10);
-    //recorder->setMaxFrameCount(500);
+    //recorder->setMaxFrameCount(510);
 
     MobileFusion::Kinect kinect;
     //kinect.addFrameListener(recorder);
@@ -35,8 +35,8 @@ int main(int argc, char **argv) {
     //kinect_pngreader.addFrameListener(cloud_provider);
     //kinect_pngreader.addFrameListener(fusion_manager);
 
-    cloud_provider->addListener(fusion_manager);
     cloud_provider->addListener(cloud_renderer);
+    cloud_provider->addListener(fusion_manager);
 
     //kinect_pngreader.run();
     //boost::thread kinect_png_thread(&MobileFusion::KinectPngReader::run, &kinect_pngreader);

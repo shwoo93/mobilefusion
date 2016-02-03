@@ -1,19 +1,22 @@
 #include "CpuTsdf.h"
 
+#include "boost/format.hpp"
+
 namespace MobileFusion {
     CpuTsdf::CpuTsdf()
     : tsdf_(new cpu_tsdf::TSDFVolumeOctree)
     , octree_()
-    , vis_(new pcl::visualization::PCLVisualizer) {
-        tsdf_->setGridSize(1., 1., 1.);
-        tsdf_->setResolution(64, 64, 64);
+    , vis_(new pcl::visualization::PCLVisualizer)
+    , mesh_count_(0) {
+        tsdf_->setGridSize(3., 3., 3.);
+        tsdf_->setResolution(512, 512, 512);
         tsdf_->setImageSize(512, 424);
         tsdf_->setCameraIntrinsics(540.686f, 540.686f, 256.0f, 212.0f);
         tsdf_->setIntegrateColor(true);
         //tsdf_->setWeightTruncationLimit(50.f);
         tsdf_->reset();
         octree_.setMinWeight(2);
-        //octree_.setColorByRGB(true);
+        octree_.setColorByRGB(true);
     }
 
     CpuTsdf::~CpuTsdf() {
@@ -42,9 +45,11 @@ namespace MobileFusion {
 
 
     void CpuTsdf::constructMesh() {
+        mesh_count_++;
         octree_.setInputTSDF(tsdf_);
         pcl::PolygonMesh mesh;
         octree_.reconstruct(mesh);
-        pcl::io::savePolygonFilePLY("test.ply",mesh);
+        std::string mesh_name = str(boost::format("/home/vllab/Desktop/test%1%") % mesh_count_);
+        pcl::io::savePolygonFilePLY(mesh_name, mesh);
     }
 }

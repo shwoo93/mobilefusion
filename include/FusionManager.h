@@ -4,7 +4,7 @@
 #include "CloudCompareRenderer.h"
 #include "CloudListener.h"
 #include "CloudRegister.h"
-//#include "CpuTsdf.h"
+#include "CpuTsdf.h"
 #include "KinectFrameListener.h"
 
 #include "TsdfVolumeOctree.h"
@@ -22,7 +22,7 @@ namespace MobileFusion {
         private:
             CloudCompareRenderer renderer_;
             CloudRegister registerer_;
-            //CpuTsdf tsdf_;
+            CpuTsdf tsdf_;
             bool cloud_dirty_;
             pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_;
             int update_count_;

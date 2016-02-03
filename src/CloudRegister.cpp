@@ -34,8 +34,8 @@ namespace MobileFusion {
         filter.filter (*target_downsampled);
 
         pcl::IterativeClosestPoint<pcl::PointXYZRGBNormal, pcl::PointXYZRGBNormal> icp;
-        icp.setMaxCorrespondenceDistance (10000);
-        icp.setMaximumIterations (100);
+        //icp.setMaxCorrespondenceDistance (10000);
+        icp.setMaximumIterations (50);
 
         icp.setInputTarget (target_downsampled);
         icp.setInputSource (source_downsampled);

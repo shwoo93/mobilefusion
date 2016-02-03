@@ -1,6 +1,9 @@
 #ifndef __CLOUD_PROVIDER_H__
 #define __CLOUD_PROVIDER_H__
 
+#include <iostream>
+#include <pcl/io/pcd_io.h>
+
 #include "KinectFrameListener.h"
 
 namespace MobileFusion {
@@ -22,6 +25,7 @@ namespace MobileFusion {
             float fx_;
             float fy_;
             int decimation_;
+            int cloud_count_;
             std::vector<boost::shared_ptr<CloudListener> > cloud_listeners_;
     };
 }

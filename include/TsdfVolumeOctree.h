@@ -159,7 +159,6 @@ namespace MobileFusion {
                 const pcl::PointCloud<PointT> &cloud,
                 const pcl::PointCloud<NormalT> &normals,
                 const Eigen::Affine3d &trans) {
-
             Eigen::Affine3f trans_inv = trans.inverse().cast<float> ();
 
             int px_step = 1;
@@ -192,20 +191,15 @@ namespace MobileFusion {
                     }
                 }
             }
-
             std::vector<OctreeNode::Ptr> voxels_culled;
             getFrustumCulledVoxels(trans, voxels_culled);
         #pragma omp parallel for
             for (size_t i = 0; i < voxels_culled.size(); ++i) {
-                updateVoxel (voxels_culled[i], cloud, normals, trans_inv);
+                if(voxels_culled[i] != NULL && !cloud.empty() && !normals.empty())
+                    updateVoxel (voxels_culled[i], cloud, normals, trans_inv);
             }
-
             is_empty_ = false;
             return (true);
-    }
-
-    inline float logNormal (float x, float mean, float var) {
-        return (-std::pow (x - mean, 2) / (2*var));
     }
 
     template <typename PointT, typename NormalT> int
@@ -214,17 +208,24 @@ namespace MobileFusion {
                 const pcl::PointCloud<PointT> &cloud,
                 const pcl::PointCloud<NormalT> &normals,
                 const Eigen::Affine3f &trans_inv) {
-
             if (voxel->hasChildren ()) {
+            std::cout<<"here1"<<std::endl;
                 std::vector<OctreeNode::Ptr>& children = voxel->getChildren();
+            std::cout<<"here2"<<std::endl;
                 std::vector<bool> is_empty (children.size());
+            std::cout<<"here3"<<std::endl;
                 for (size_t i = 0; i < children.size(); i++) {
+                    if (children[i] != NULL) {
                     is_empty[i] = updateVoxel (children[i], cloud, normals, trans_inv) < 0;
                 }
+                }
+            std::cout<<"here4"<<std::endl;
                 bool all_are_empty = true;
+            std::cout<<"here5"<<std::endl;
                 for (size_t i = 0; i < is_empty.size(); i++)
                     all_are_empty &= is_empty[i];
                 if (all_are_empty) {
+            std::cout<<"here6"<<std::endl;
                     children.clear ();
                 }
                 else {
@@ -233,27 +234,44 @@ namespace MobileFusion {
             }
 
             pcl::PointXYZ v_g_orig;
+            std::cout<<"here7"<<std::endl;
             voxel->getCenter (v_g_orig.x, v_g_orig.y, v_g_orig.z);
+            std::cout<<"here8"<<std::endl;
             pcl::PointXYZ v_g = pcl::transformPoint (v_g_orig, trans_inv);
+            std::cout<<"here9"<<std::endl;
             if (v_g.z < min_sensor_dist_ || v_g.z > max_sensor_dist_)
                 return (0);
             int u, v;
-            if (!reprojectPoint (v_g, u, v))
-                return (0);
+            if (!reprojectPoint (v_g, u, v)) {
+            std::cout<<"here10"<<std::endl;
+                return (0);}
             const PointT &pt = cloud (u,v);
+            std::cout<<"here11"<<std::endl;
             if (pcl_isnan (pt.z))
                 return (0);
             float d;
             float w;
+            std::cout<<"here12"<<std::endl;
             voxel->getData (d, w);
+            std::cout<<"here13"<<std::endl;
             float d_new = (pt.z - v_g.z);
+            std::cout<<"new depth value: "<<pt.z<<std::endl;
+            std::cout<<"original depth value: "<<v_g.z<<std::endl;
+            std::cout<<d_new<<std::endl;
+            std::cout<<"here14"<<std::endl;
             if (fabs (d_new) < 3*voxel->getMaxSize()/4.) {
                 float xsize, ysize, zsize;
+            std::cout<<"here15"<<std::endl;
                 voxel->getSize (xsize, ysize, zsize);
+            std::cout<<"here16"<<std::endl;
                 if (xsize > xsize_ / xres_ && ysize > ysize_ / yres_ && zsize > zsize_ / zres_) {
+            std::cout<<"here17"<<std::endl;
                     std::vector<OctreeNode::Ptr>& children = voxel->split();
+            std::cout<<"here18"<<std::endl;
                     std::vector<bool> is_empty (children.size());
+            std::cout<<"here19"<<std::endl;
                     for (size_t i = 0; i < children.size(); ++i) {
+                        if(children[i] != NULL)
                         is_empty[i] = updateVoxel (children[i], cloud, normals, trans_inv) < 0;
                     }
                     bool all_are_empty = true;
@@ -267,23 +285,31 @@ namespace MobileFusion {
                     }
                 }
             }
+
             if (d_new > max_dist_pos_)
                 d_new = max_dist_pos_;
-            else if( d_new < -max_dist_neg_)
+            else if( d_new < -max_dist_neg_) {
+            std::cout<<"here20"<<std::endl;
                 return (0);
+            }
 
             d_new /= max_dist_neg_;
 
             float w_new = 1;
 
-            if (integrate_color_)
+            if (integrate_color_){
+            std::cout<<"here21"<<std::endl;
                 voxel->addObservation (d_new, w_new, max_weight_, pt.r, pt.g, pt.b);
-            else
+            std::cout<<"here22"<<std::endl;}
+            else{
                 voxel->addObservation (d_new, w_new, max_weight_);
-            if (voxel->d_ < -0.99)
-                return (0);
-            else if (voxel->d_ < 0.99 * max_dist_pos_ / max_dist_neg_)
-                return (1);
+            }
+            if (voxel->d_ < -0.99){
+            std::cout<<"here25"<<std::endl;
+                return (0);}
+            else if (voxel->d_ < 0.99 * max_dist_pos_ / max_dist_neg_){
+            std::cout<<"here26"<<std::endl;
+                return (1);}
             else
                 return (-1);
         }

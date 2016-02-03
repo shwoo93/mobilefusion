@@ -63,5 +63,7 @@ include_directories(${INCLUDE_DIRS})
 # executables
 add_executable(main main.cpp ${SOURCES})
 target_link_libraries(main ${LIBRARIES})
-message(STATUS ${OpenCV_INCLUDE_DIRS})
-message(STATUS ${OpenCV_LIBRARIES})
+
+add_executable(main2 main2.cpp ${SOURCES})
+target_link_libraries(main2 ${LIBRARIES})
+

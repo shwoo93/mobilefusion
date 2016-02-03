@@ -1,5 +1,7 @@
 #include "CloudProvider.h"
 
+#include "boost/format.hpp"
+
 #include "CloudListener.h"
 
 namespace MobileFusion{
@@ -8,15 +10,22 @@ namespace MobileFusion{
     , cy_(212.0f)
     , fx_(540.686f)
     , fy_(540.686f)
-    , decimation_(5)
-    , cloud_listeners_() {
+    , decimation_(3)
+    , cloud_listeners_()
+    , cloud_count_ (0) {
     }
 
     CloudProvider::~CloudProvider() {
     }
 
     void CloudProvider::onFrame(const cv::Mat& rgb, const cv::Mat &depth) {
-        pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(cloudFromRgbd(rgb, depth));
+        ++cloud_count_;
+
+        pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud (cloudFromRgbd(rgb, depth));
+
+        std::string cloud_name = str(boost::format ("/home/vllab/Desktop/PCDfiles/cloud%1%.pcd") % cloud_count_);
+        pcl::io::savePCDFile(cloud_name, *cloud);
+
         for(std::vector<boost::shared_ptr<CloudListener> >::iterator iter = cloud_listeners_.begin() ; iter != cloud_listeners_.end() ; iter++) {
             (*iter)->onCloudFrame(cloud);
         }
@@ -47,8 +56,7 @@ namespace MobileFusion{
                 pt.g = rgb.at<cv::Vec3b>(h, w)[1];
                 pt.r = rgb.at<cv::Vec3b>(h, w)[2];
 
-                float depth_point = static_cast<float>(depth.at<unsigned short>(h,w)) * 0.001f;
-
+                float depth_point = depth.at<float>(h,w) * 0.001f;
                 pt.x = (static_cast<float>(w) - cx_) * depth_point / fx_;
                 pt.y = (static_cast<float>(h) - cy_) * depth_point / fy_;
                 pt.z = depth_point;

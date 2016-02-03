@@ -18,6 +18,7 @@
 #include <pcl/io/vtk_lib_io.h>
 
 namespace MobileFusion {
+
     class CpuTsdf {
         public:
             CpuTsdf();
@@ -35,9 +36,8 @@ namespace MobileFusion {
             cpu_tsdf::TSDFVolumeOctree::Ptr tsdf_;
             cpu_tsdf::MarchingCubesTSDFOctree octree_;
             pcl::visualization::PCLVisualizer::Ptr vis_;
+            int mesh_count_;
     };
 }
-
-
 
 #endif
