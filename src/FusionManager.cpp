@@ -62,6 +62,7 @@ namespace MobileFusion {
         //    std::cout<<"raytraced"<<raytraced->size()<<std::endl;
         //    registerer_.setSourceCloud (raytraced);
 
+        /*
         static int index = 1;
         if(!cloud_dirty_)
             return;
@@ -98,6 +99,48 @@ namespace MobileFusion {
         }
 
         tsdf_.constructMesh ();
+        */
+
+        if(!cloud_dirty_) {
+            return;
+        }
+        else {
+            cloud_dirty_ = false;
+        }
+
+        std::cout << "FusionManager::update() 1" << std::endl;
+
+        pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>(*cloud_));
+
+        std::cout << "FusionManager::update() 2" << std::endl;
+
+        pcl::PointCloud<pcl::Normal>::Ptr normal = CloudNormalProvider::computeNormal(cloud, 4);
+
+        std::cout << "FusionManager::update() 3" << std::endl;
+
+        pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr cloud_concatenated (new pcl::PointCloud<pcl::PointXYZRGBNormal>);
+
+        std::cout << "FusionManager::update() 4" << std::endl;
+
+        pcl::concatenateFields (*cloud, *normal, *cloud_concatenated);
+
+
+        if(update_count_ == 0) {
+            tsdf_.integrateCloud (*cloud,*normal);
+            registerer_.setTargetCloud (cloud_concatenated);
+        }
+        else {
+            registerer_.setSourceCloud (cloud_concatenated);
+            pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr cloud_target_downsampled (new pcl::PointCloud<pcl::PointXYZRGBNormal>);
+            pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr cloud_source_registered (new pcl::PointCloud<pcl::PointXYZRGBNormal>);
+            registerer_.getIcpResultCloud (5.f, cloud_target_downsampled, cloud_source_registered);
+            tsdf_.integrateCloud (*cloud, *normal, registerer_.getCameraPose());
+            registerer_.setTargetCloud (cloud_concatenated);
+        }
+
+        tsdf_.constructMesh ();
+
+        ++update_count_;
     }
 
     void FusionManager::onFrame(const cv::Mat& rgb, const cv::Mat& depth) {
