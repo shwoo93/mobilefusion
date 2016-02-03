@@ -30,38 +30,6 @@ pcl::visualization::PCLVisualizer *p;
 int vp_1 = 1;
 int vp_2 = 2;
 
-struct PCD {
-    PointCloud::Ptr cloud;
-    std::string f_name;
-
-    PCD() : cloud (new PointCloud) {};
-};
-
-struct PCDComparator {
-    bool operator () (const PCD& p1, const PCD& p2) {
-        return (p1.f_name < p2.f_name);
-    }
-};
-
-//class MyPointRepresentation : public pcl::PointRepresentation <PointNormalT>
-//{
-//    using pcl::PointRepresentation<PointNormalT>::nr_dimensions_;
-//    public:
-//        MyPointRepresentation () {
-//            nr_dimensions_ = 7;
-//        }
-//
-//        virtual void copyToFloatArray (const PointNormalT& p, float* out) const {
-//            out[0] = p.x;
-//            out[1] = p.y;
-//            out[2] = p.z;
-//            out[3] = p.r;
-//            out[4] = p.g;
-//            out[5] = p.b;
-//            out[6] = p.curvature;
-//        }
-//};
-
 void showCloudsLeft (const PointCloud::Ptr cloud_target, const PointCloud::Ptr cloud_source) {
     p->removePointCloud ("vp1_target");
     p->removePointCloud ("vp1_source");
@@ -87,27 +55,6 @@ void showCloudsRight (const PointCloudWithNormals::Ptr cloud_target, const Point
 
     p->spinOnce();
 }
-
-//void loadData (int argc, char** argv, std::vector<PCD, Eigen::aligned_allocator<PCD> > &models) {
-//    std::string extension (".pcd");
-//
-//    for (int i = 1; i < argc; i++) {
-//        std::string fname = std::string (argv[i]);
-//        if (fname.size () <= extension.size())
-//            continue;
-//        std::transform (fname.begin(), fname.end(), fname.begin(), (int(*)(int))tolower);
-//
-//        if (fname.compare (fname.size () - extension.size(), extension.size (), extension) == 0) {
-//            PCD m;
-//            m.f_name = argv[i];
-//            pcl::io::loadPCDFile (argv[i], *m.cloud);
-//            std::vector<int> indices;
-//            pcl::removeNaNFromPointCloud (*m.cloud, *m.cloud, indices);
-//
-//            models.push_back (m);
-//        }
-//    }
-//}
 
 void pairAlign (const PointCloud::Ptr cloud_src, const PointCloud::Ptr cloud_tgt, PointCloud::Ptr output, Eigen::Matrix4f& final_transform, bool downsample = false) {
 
@@ -200,14 +147,13 @@ void pairAlign (const PointCloud::Ptr cloud_src, const PointCloud::Ptr cloud_tgt
 
 int main (int argc, char** argv) {
 
-    //std::vector<PCD, Eigen::aligned_allocator<PCD> > data;
-    //loadData (argc, argv, data);
     pcl::PCDReader reader;
     std::vector<pcl::PointCloud<pcl::PointXYZRGB>::Ptr> data;
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZRGB>);
     int index = 1;
 
     while(true) {
+
         std::cout<<"# iteration: "<< index << std::endl;
         std::string cloud_name = str(boost::format ("/home/vllab/Desktop/PCDfiles/cloud%1%.pcd") % index);
 
@@ -218,11 +164,6 @@ int main (int argc, char** argv) {
             std::cout<<"no PCDfile"<<std::endl;
             break;
         }
-
-        //if (pcl::io::loadPCDFile<pcl::PointXYZRGB> (cloud_name, *cloud) == -1) {
-        //    std::cout<<"no PCDfile"<<std::endl;
-        //    break;
-        //}
 
         data.push_back(cloud);
         ++index;
