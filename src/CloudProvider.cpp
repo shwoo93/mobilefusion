@@ -1,7 +1,5 @@
 #include "CloudProvider.h"
 
-#include <limits>
-
 #include "boost/format.hpp"
 
 #include "CloudListener.h"
@@ -33,33 +31,33 @@ namespace MobileFusion{
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr CloudProvider::cloudFromRgbd(const cv::Mat& rgb, const cv::Mat& depth) {
         assert(rgb.rows == depth.rows && rgb.cols == depth.cols);
 
+        int width = rgb.cols;
+        int height = rgb.rows;
+
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
-
-        cloud->width = rgb.cols;
-        cloud->height = rgb.rows;
-        cloud->is_dense = false;
-        cloud->resize(cloud->height * cloud->width);
-
-        for(int i = 0 ; i < cloud->width; ++i) {
-            for(int j = 0 ; j < cloud->height; ++j) {
-                pcl::PointXYZRGB& pt = cloud->at(i, j);
-
-                cv::Vec3b v(rgb.at<cv::Vec3b>(j, i));
-                pt.b = v[0];
-                pt.g = v[1];
-                pt.r = v[2];
+        for(int i = 0 ; i < width; ++i) {
+            for(int j = 0 ; j < height; ++j) {
+                pcl::PointXYZRGB point;
 
                 //depth in meters
                 if(depth.at<float>(j, i) == 0.0f) {
-                    pt.z = std::numeric_limits<float>::quiet_NaN();
+                    continue;
                 }
                 else {
-                    pt.z = depth.at<float>(j, i) * 0.001f;
+                    point.z = depth.at<float>(j, i) * 0.001f;
                 }
-                pt.x = (static_cast<float>(i) - cx_) * pt.z / fx_;
-                pt.y = (static_cast<float>(j) - cy_) * pt.z / fy_;
+                point.x = (static_cast<float>(i) - cx_) * point.z / fx_;
+                point.y = (static_cast<float>(j) - cy_) * point.z / fy_;
+
+                cv::Vec3b v(rgb.at<cv::Vec3b>(j, i));
+                point.b = v[0];
+                point.g = v[1];
+                point.r = v[2];
+
+                cloud->push_back(point);
             }
         }
+        cloud->is_dense = true;
 
         return cloud;
     }

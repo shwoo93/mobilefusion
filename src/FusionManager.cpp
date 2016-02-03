@@ -5,6 +5,7 @@
 #include <boost/format.hpp>
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/visualization/pcl_visualizer.h>
+#include <pcl/registration/gicp.h>
 
 namespace MobileFusion {
     FusionManager::FusionManager()
@@ -110,37 +111,26 @@ namespace MobileFusion {
             cloud_dirty_ = false;
         }
 
-        std::cout << "FusionManager::update() 1" << std::endl;
+        std::cout << "FusionManager::update()" << std::endl;
 
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>(*cloud_));
-        std::cout << "width: " << cloud->width << std::endl;
-        std::cout << "height: " << cloud->height << std::endl;
-        std::cout << "FusionManager::update() 2" << std::endl;
+        //pcl::PointCloud<pcl::Normal>::Ptr normal = CloudNormalProvider::computeNormal(cloud, 20);
 
-        pcl::PointCloud<pcl::Normal>::Ptr normal = CloudNormalProvider::computeNormal(cloud, 4);
-
-        std::cout << "FusionManager::update() 3" << std::endl;
-
-        pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr cloud_concatenated (new pcl::PointCloud<pcl::PointXYZRGBNormal>);
-
-        std::cout << "FusionManager::update() 4" << std::endl;
-
-        pcl::concatenateFields (*cloud, *normal, *cloud_concatenated);
+        static pcl::PointCloud<pcl::PointXYZRGB>::Ptr target;
 
         if(update_count_ == 0) {
-            tsdf_.integrateCloud (*cloud,*normal);
-            registerer_.setTargetCloud (cloud_concatenated);
+            target = cloud;
         }
         else {
-            registerer_.setSourceCloud (cloud_concatenated);
-            pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr cloud_target_downsampled (new pcl::PointCloud<pcl::PointXYZRGBNormal>);
-            pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr cloud_source_registered (new pcl::PointCloud<pcl::PointXYZRGBNormal>);
-            registerer_.getIcpResultCloud (5.f, cloud_target_downsampled, cloud_source_registered);
-            tsdf_.integrateCloud (*cloud, *normal, registerer_.getCameraPose());
-            registerer_.setTargetCloud (cloud_concatenated);
-        }
+            pcl::GeneralizedIterativeClosestPoint<pcl::PointXYZRGB, pcl::PointXYZRGB> gicp;
+            gicp.setInputSource(cloud);
+            gicp.setInputTarget(target);
 
-        tsdf_.constructMesh ();
+            pcl::PointCloud<pcl::PointXYZRGB> aligned;
+            gicp.align(aligned);
+
+            std::cout << "has converged:" << gicp.hasConverged() << " score: " << gicp.getFitnessScore() << std::endl;
+        }
 
         ++update_count_;
     }
