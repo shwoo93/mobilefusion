@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
     //boost::shared_ptr<MobileFusion::KinectRecorder> recorder(new MobileFusion::KinectRecorder());
     boost::shared_ptr<MobileFusion::KinectRenderer> renderer(new MobileFusion::KinectRenderer());
     boost::shared_ptr<MobileFusion::CloudProvider> cloud_provider(new MobileFusion::CloudProvider());
-    //boost::shared_ptr<MobileFusion::FusionManager> fusion_manager(new MobileFusion::FusionManager());
+    boost::shared_ptr<MobileFusion::FusionManager> fusion_manager(new MobileFusion::FusionManager());
     boost::shared_ptr<MobileFusion::CloudRenderer> cloud_renderer(new MobileFusion::CloudRenderer("cloud"));
     //boost::shared_ptr<MobileFusion::CloudRecorder> cloud_recorder(new MobileFusion::CloudRecorder());
 
@@ -30,10 +30,10 @@ int main(int argc, char **argv) {
     //kinect_interface->addFrameListener(recorder);
     kinect_interface->addFrameListener(renderer);
     kinect_interface->addFrameListener(cloud_provider);
-    //kinect_interface->addFrameListener(fusion_manager);
+    kinect_interface->addFrameListener(fusion_manager);
 
     cloud_provider->addListener(cloud_renderer);
-    //cloud_provider->addListener(fusion_manager);
+    cloud_provider->addListener(fusion_manager);
     //cloud_provider->addListener(cloud_recorder);
 
     //start the Kinect thread
@@ -41,7 +41,7 @@ int main(int argc, char **argv) {
     //kinect_thread.join();
 
     while(true) {
-    //    fusion_manager->update();
+        fusion_manager->update();
     }
 
     return 0;

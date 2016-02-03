@@ -2,8 +2,10 @@
 
 #include "CloudNormalProvider.h"
 
+#include <boost/format.hpp>
+#include <pcl/filters/voxel_grid.h>
 #include <pcl/visualization/pcl_visualizer.h>
-#include "boost/format.hpp"
+
 namespace MobileFusion {
     FusionManager::FusionManager()
     : renderer_("compare")
@@ -111,7 +113,8 @@ namespace MobileFusion {
         std::cout << "FusionManager::update() 1" << std::endl;
 
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>(*cloud_));
-
+        std::cout << "width: " << cloud->width << std::endl;
+        std::cout << "height: " << cloud->height << std::endl;
         std::cout << "FusionManager::update() 2" << std::endl;
 
         pcl::PointCloud<pcl::Normal>::Ptr normal = CloudNormalProvider::computeNormal(cloud, 4);
@@ -123,7 +126,6 @@ namespace MobileFusion {
         std::cout << "FusionManager::update() 4" << std::endl;
 
         pcl::concatenateFields (*cloud, *normal, *cloud_concatenated);
-
 
         if(update_count_ == 0) {
             tsdf_.integrateCloud (*cloud,*normal);

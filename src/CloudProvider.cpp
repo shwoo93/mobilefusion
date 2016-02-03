@@ -1,5 +1,7 @@
 #include "CloudProvider.h"
 
+#include <limits>
+
 #include "boost/format.hpp"
 
 #include "CloudListener.h"
@@ -48,7 +50,12 @@ namespace MobileFusion{
                 pt.r = v[2];
 
                 //depth in meters
-                pt.z = depth.at<float>(j, i) * 0.001f;
+                if(depth.at<float>(j, i) == 0.0f) {
+                    pt.z = std::numeric_limits<float>::quiet_NaN();
+                }
+                else {
+                    pt.z = depth.at<float>(j, i) * 0.001f;
+                }
                 pt.x = (static_cast<float>(i) - cx_) * pt.z / fx_;
                 pt.y = (static_cast<float>(j) - cy_) * pt.z / fy_;
             }
