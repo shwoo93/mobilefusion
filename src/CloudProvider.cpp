@@ -23,8 +23,9 @@ namespace MobileFusion{
 
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud (cloudFromRgbd(rgb, depth));
 
-        std::string cloud_name = str(boost::format ("/home/vllab/Desktop/PCDfiles/cloud%1%.pcd") % cloud_count_);
-        pcl::io::savePCDFile(cloud_name, *cloud);
+        //Moved to CloudRecorder
+        //std::string cloud_name = str(boost::format ("/home/vllab/Desktop/PCDfiles/cloud%1%.pcd") % cloud_count_);
+        //pcl::io::savePCDFile(cloud_name, *cloud);
 
         for(std::vector<boost::shared_ptr<CloudListener> >::iterator iter = cloud_listeners_.begin() ; iter != cloud_listeners_.end() ; iter++) {
             (*iter)->onCloudFrame(cloud);
