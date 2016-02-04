@@ -2,8 +2,11 @@
 
 #include "CloudNormalProvider.h"
 
+#include <boost/format.hpp>
+#include <pcl/filters/voxel_grid.h>
 #include <pcl/visualization/pcl_visualizer.h>
-#include "boost/format.hpp"
+#include <pcl/registration/gicp.h>
+
 namespace MobileFusion {
     FusionManager::FusionManager()
     : renderer_("compare")
@@ -62,6 +65,7 @@ namespace MobileFusion {
         //    std::cout<<"raytraced"<<raytraced->size()<<std::endl;
         //    registerer_.setSourceCloud (raytraced);
 
+        /*
         static int index = 1;
         if(!cloud_dirty_)
             return;
@@ -98,6 +102,37 @@ namespace MobileFusion {
         }
 
         tsdf_.constructMesh ();
+        */
+
+        if(!cloud_dirty_) {
+            return;
+        }
+        else {
+            cloud_dirty_ = false;
+        }
+
+        std::cout << "FusionManager::update()" << std::endl;
+
+        pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>(*cloud_));
+        //pcl::PointCloud<pcl::Normal>::Ptr normal = CloudNormalProvider::computeNormal(cloud, 20);
+
+        static pcl::PointCloud<pcl::PointXYZRGB>::Ptr target;
+
+        if(update_count_ == 0) {
+            target = cloud;
+        }
+        else {
+            pcl::GeneralizedIterativeClosestPoint<pcl::PointXYZRGB, pcl::PointXYZRGB> gicp;
+            gicp.setInputSource(cloud);
+            gicp.setInputTarget(target);
+
+            pcl::PointCloud<pcl::PointXYZRGB> aligned;
+            gicp.align(aligned);
+
+            std::cout << "has converged:" << gicp.hasConverged() << " score: " << gicp.getFitnessScore() << std::endl;
+        }
+
+        ++update_count_;
     }
 
     void FusionManager::onFrame(const cv::Mat& rgb, const cv::Mat& depth) {

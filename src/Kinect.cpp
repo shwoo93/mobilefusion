@@ -51,16 +51,23 @@ namespace MobileFusion{
             libfreenect2::Frame undistorted(512, 424, 4), registered(512, 424, 4);
 
             registration_->apply(rgb_frame, depth_frame, &undistorted, &registered);
-
-            cv::Mat rgb;
-            cv::Mat rgba((int)registered.height, (int)registered.width, CV_8UC4, registered.data);
-            cv::Mat depth((int)undistorted.height, (int)undistorted.width , CV_32FC1, undistorted.data);
-            cv::cvtColor(rgba, rgb, CV_BGRA2BGR);
-
             listener_.release(frames);
 
-            for(std::vector<boost::shared_ptr<KinectFrameListener> >::iterator iter = frame_listeners_.begin(); iter!=frame_listeners_.end() ; iter++) {
-                (*iter)->onFrame(rgb, depth);
+            cv::Mat rgba((int)registered.height, (int)registered.width, CV_8UC4, registered.data);
+            cv::Mat depth((int)undistorted.height, (int)undistorted.width , CV_32FC1, undistorted.data);
+
+            cv::Mat rgb;
+            //Should flip horizontally to get correct directions.
+            cv::Mat rgb_flipped;
+            cv::Mat depth_flipped;
+            cv::cvtColor(rgba, rgb, CV_BGRA2BGR);
+            //1 stands for the horizontal flip
+            cv::flip(rgb, rgb_flipped, 1);
+            cv::flip(depth, depth_flipped, 1);
+
+            for(std::vector<boost::shared_ptr<KinectFrameListener> >::iterator iter = frame_listeners_.begin();
+                iter!=frame_listeners_.end() ; iter++) {
+                (*iter)->onFrame(rgb_flipped, depth_flipped);
             }
         }
     }

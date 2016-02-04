@@ -24,8 +24,6 @@ namespace MobileFusion {
             float cy_;
             float fx_;
             float fy_;
-            int decimation_;
-            int cloud_count_;
             std::vector<boost::shared_ptr<CloudListener> > cloud_listeners_;
     };
 }

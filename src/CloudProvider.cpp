@@ -10,21 +10,14 @@ namespace MobileFusion{
     , cy_(212.0f)
     , fx_(540.686f)
     , fy_(540.686f)
-    , decimation_(3)
-    , cloud_listeners_()
-    , cloud_count_ (0) {
+    , cloud_listeners_() {
     }
 
     CloudProvider::~CloudProvider() {
     }
 
     void CloudProvider::onFrame(const cv::Mat& rgb, const cv::Mat &depth) {
-        ++cloud_count_;
-
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud (cloudFromRgbd(rgb, depth));
-
-        std::string cloud_name = str(boost::format ("/home/vllab/Desktop/PCDfiles/cloud%1%.pcd") % cloud_count_);
-        pcl::io::savePCDFile(cloud_name, *cloud);
 
         for(std::vector<boost::shared_ptr<CloudListener> >::iterator iter = cloud_listeners_.begin() ; iter != cloud_listeners_.end() ; iter++) {
             (*iter)->onCloudFrame(cloud);
@@ -36,32 +29,35 @@ namespace MobileFusion{
     }
 
     pcl::PointCloud<pcl::PointXYZRGB>::Ptr CloudProvider::cloudFromRgbd(const cv::Mat& rgb, const cv::Mat& depth) {
+        assert(rgb.rows == depth.rows && rgb.cols == depth.cols);
+
+        int width = rgb.cols;
+        int height = rgb.rows;
+
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud(new pcl::PointCloud<pcl::PointXYZRGB>);
+        for(int i = 0 ; i < width; ++i) {
+            for(int j = 0 ; j < height; ++j) {
+                pcl::PointXYZRGB point;
 
-        if(decimation_ < 1) {
-            return cloud;
-        }
+                //depth in meters
+                if(depth.at<float>(j, i) == 0.0f) {
+                    continue;
+                }
+                else {
+                    point.z = depth.at<float>(j, i) * 0.001f;
+                }
+                point.x = (static_cast<float>(i) - cx_) * point.z / fx_;
+                point.y = (static_cast<float>(j) - cy_) * point.z / fy_;
 
-        cloud->height = depth.rows / decimation_;
-        cloud->width = depth.cols / decimation_;
-        cloud->is_dense = false;
-        cloud->resize(cloud->height * cloud->width);
+                cv::Vec3b v(rgb.at<cv::Vec3b>(j, i));
+                point.b = v[0];
+                point.g = v[1];
+                point.r = v[2];
 
-        for(int h = 0 ; h < depth.rows && h / decimation_ < static_cast<int>(cloud->height); h += decimation_) {
-            for(int w = 0 ; w < depth.cols && w / decimation_ < static_cast<int>(cloud->width); w += decimation_) {
-
-                //pcl::PointXYZRGB& pt = cloud->at((h / decimation_) * cloud->width + (w / decimation_));
-                pcl::PointXYZRGB& pt = cloud->at((w / decimation_) , (h / decimation_));
-                pt.b = rgb.at<cv::Vec3b>(h, w)[0];
-                pt.g = rgb.at<cv::Vec3b>(h, w)[1];
-                pt.r = rgb.at<cv::Vec3b>(h, w)[2];
-
-                float depth_point = depth.at<float>(h,w) * 0.001f;
-                pt.x = (static_cast<float>(w) - cx_) * depth_point / fx_;
-                pt.y = (static_cast<float>(h) - cy_) * depth_point / fy_;
-                pt.z = depth_point;
+                cloud->push_back(point);
             }
         }
+        cloud->is_dense = true;
 
         return cloud;
     }
