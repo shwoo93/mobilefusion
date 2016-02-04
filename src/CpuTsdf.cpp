@@ -49,7 +49,7 @@ namespace MobileFusion {
         octree_.setInputTSDF(tsdf_);
         pcl::PolygonMesh mesh;
         octree_.reconstruct(mesh);
-        std::string mesh_name = str(boost::format("/home/vllab/Desktop/test%1%") % mesh_count_);
+        std::string mesh_name = str(boost::format("/home/vllab/Desktop/mesh/test%1%") % mesh_count_);
         pcl::io::savePolygonFilePLY(mesh_name, mesh);
     }
 }
