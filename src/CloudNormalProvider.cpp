@@ -31,9 +31,6 @@ namespace MobileFusion {
         //normal_estimation.setSearchMethod(tree);
         normal_estimation.setKSearch(k_search);
 
-        std::cout<<cloud->width<<std::endl;
-        std::cout<<cloud->height<<std::endl;
-
         normal_estimation.setInputCloud(cloud);
         normal_estimation.compute(*points_with_normals);
         pcl::copyPointCloud(*cloud, *points_with_normals);

@@ -22,35 +22,26 @@ namespace MobileFusion {
             CloudRegister();
             ~CloudRegister();
 
-            void getIcpResultCloud(
-                    int voxelsize,
-                    pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr& cloud_target_downsampled,
-                    pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr& cloud_source_registered);
-
-            void pairAlign(
+            static void pairAlign(
                     const pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_src,
                     const pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_tgt,
                     Eigen::Matrix4f& final_transform,
+                    bool& hasICPConverged,
                     bool downsample = true);
 
-            Eigen::Affine3d getCameraPose();
+            void setTargetCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud);
 
-            void setSourceCloud(pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr cloud);
+            void getTargetCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr& cloud) const;
 
-            void setTargetCloud(pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr cloud);
+            void computeGlobalTransformation (Eigen::Matrix4f pair_transformation);
 
-            void getSourceCloud(pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr& cloud) const;
-
-            void getTargetCloud(pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr& cloud) const;
+            Eigen::Affine3d getGlobalTransformation () const;
 
         private:
-            std::vector<pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr> rendererInput_;
 
-            pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr source_cloud_;
+            pcl::PointCloud<pcl::PointXYZRGB>::Ptr target_cloud_;
 
-            pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr target_cloud_;
-
-            Eigen::Matrix4f global_transform_;
+            Eigen::Matrix4f global_transformation_;
     };
 }
 #endif

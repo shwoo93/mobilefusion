@@ -48,7 +48,6 @@ SET(SOURCES
     src/CloudRegister.cpp
     src/CloudRenderer.cpp
     src/CloudRecorder.cpp
-    src/CpuTsdf.cpp
     src/FusionManager.cpp
     src/Kinect.cpp
     src/KinectPngReader.cpp
@@ -57,6 +56,7 @@ SET(SOURCES
     src/Octree.cpp
     src/OctreeNode.cpp
     src/TsdfVolumeOctree.cpp
+    src/TSDFVolumeWrapper.cpp
 )
 
 link_directories(${PCL_LIBRARY_DIRS})

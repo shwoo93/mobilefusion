@@ -1,15 +1,14 @@
 #ifndef __FUSION_MANAGER_H__
 #define __FUSION_MANAGER_H__
 
+#include <boost/thread.hpp>
+
 #include "CloudCompareRenderer.h"
 #include "CloudListener.h"
 #include "CloudRegister.h"
-#include "CpuTsdf.h"
 #include "KinectFrameListener.h"
+#include "TSDFVolumeWrapper.h"
 
-#include "TsdfVolumeOctree.h"
-
-#include <boost/thread.hpp>
 namespace MobileFusion {
     class FusionManager : public KinectFrameListener, public CloudListener {
         public:
@@ -22,11 +21,11 @@ namespace MobileFusion {
         private:
             CloudCompareRenderer renderer_;
             CloudRegister registerer_;
-            CpuTsdf tsdf_;
+            TSDFVolumeWrapper tsdf_wrapper_;
             bool cloud_dirty_;
-            pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_;
             int update_count_;
-            TSDFVolumeOctree octree_;
+            pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_;
+            //TSDFVolumeOctree octree_;
     };
 }
 #endif
