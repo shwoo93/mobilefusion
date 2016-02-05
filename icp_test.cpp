@@ -5,11 +5,13 @@
 
 #include <pcl/io/pcd_io.h>
 
+#include <pcl/filters/uniform_sampling.h>
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/filters/filter.h>
 
 #include <pcl/features/normal_3d.h>
 
+#include <pcl/registration/gicp.h>
 #include <pcl/registration/icp.h>
 #include <pcl/registration/icp_nl.h>
 #include <pcl/registration/transforms.h>
@@ -29,6 +31,20 @@ typedef pcl::PointCloud<PointNormalT> PointCloudWithNormals;
 pcl::visualization::PCLVisualizer *p;
 int vp_1 = 1;
 int vp_2 = 2;
+int vp_3 = 3;
+
+void showCloud (const PointCloud::Ptr cloud_first, const PointCloud::Ptr cloud_second) {
+    p->removePointCloud ("show_result1");
+    p->removePointCloud ("show_result2");
+
+    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb_1(cloud_first);
+    pcl::visualization::PointCloudColorHandlerRGBField<pcl::PointXYZRGB> rgb_2(cloud_second);
+
+    p->addPointCloud (cloud_first, rgb_1, "show_result1", vp_1);
+    p->addPointCloud (cloud_second, rgb_2, "show_result2", vp_2);
+
+    p->spinOnce(1000);
+}
 
 void showCloudsLeft (const PointCloud::Ptr cloud_target, const PointCloud::Ptr cloud_source) {
     p->removePointCloud ("vp1_target");
@@ -60,14 +76,22 @@ void pairAlign (const PointCloud::Ptr cloud_src, const PointCloud::Ptr cloud_tgt
 
     PointCloud::Ptr src (new PointCloud);
     PointCloud::Ptr tgt (new PointCloud);
-    pcl::VoxelGrid<PointT> grid;
+    //pcl::VoxelGrid<PointT> grid;
+    pcl::UniformSampling<PointT> uniform_sampling;
     if (downsample) {
-        grid.setLeafSize (0.05, 0.05, 0.05);
-        grid.setInputCloud (cloud_src);
-        grid.filter (*src);
+        //grid.setLeafSize (0.05, 0.05, 0.05);
+        //grid.setInputCloud (cloud_src);
+        //grid.filter (*src);
 
-        grid.setInputCloud (cloud_tgt);
-        grid.filter (*tgt);
+        //grid.setInputCloud (cloud_tgt);
+        //grid.filter (*tgt);
+        //
+        uniform_sampling.setRadiusSearch(0.05f);
+        uniform_sampling.setInputCloud (cloud_src);
+        uniform_sampling.filter(*src);
+
+        uniform_sampling.setInputCloud (cloud_tgt);
+        uniform_sampling.filter(*tgt);
     }
     else {
         src = cloud_src;
@@ -92,12 +116,20 @@ void pairAlign (const PointCloud::Ptr cloud_src, const PointCloud::Ptr cloud_tgt
     pcl::copyPointCloud (*tgt, *points_with_normals_tgt);
 
     //align
-    pcl::IterativeClosestPointNonLinear<PointNormalT, PointNormalT> reg;
+    //pcl::IterativeClosestPointNonLinear<PointNormalT, PointNormalT> reg;
+    //reg.setTransformationEpsilon (1e-6);
+    //reg.setMaxCorrespondenceDistance (0.1);
+
+    //reg.setInputSource (points_with_normals_src);
+    //reg.setInputTarget (points_with_normals_tgt);
+
+    pcl::GeneralizedIterativeClosestPoint<PointNormalT, PointNormalT> reg;
     reg.setTransformationEpsilon (1e-6);
     reg.setMaxCorrespondenceDistance (0.1);
 
     reg.setInputSource (points_with_normals_src);
     reg.setInputTarget (points_with_normals_tgt);
+
 
     //run the same optimization in a loop and visualize the results
     Eigen::Matrix4f Ti = Eigen::Matrix4f::Identity(), prev, targetToSource;
@@ -169,6 +201,19 @@ int main (int argc, char** argv) {
         ++index;
     }
 
+    //while(true) {
+
+    //    std::cout<<"# iteration of result: "<<index <<std::endl;
+    //    std::string cloud_name = str(boost::format("/home/vllab/Desktop/GICPResult/result%1%.pcd") % index);
+
+    //    if(reader.read(cloud_name, *cloud) == -1) {
+    //        break;
+    //    }
+
+    //    data.push_back(cloud);
+    //    ++index;
+    //}
+
     if (data.empty()) {
         std::cout<<"here1"<<std::endl;
         return -1;
@@ -178,12 +223,17 @@ int main (int argc, char** argv) {
     p->createViewPort (0.0, 0, 0.5, 1.0, vp_1);
     p->createViewPort (0.5, 0, 1.0, 1.0, vp_2);
 
-    PointCloud::Ptr result (new PointCloud), source, target;
+    //PointCloud::Ptr result (new PointCloud), source, target;
+    PointCloud::Ptr cloud_result1, cloud_result2;
+
     Eigen::Matrix4f GlobalTransform = Eigen::Matrix4f::Identity(), pairTransform;
 
     for (size_t i = 1; i < data.size(); ++i) {
 
-        std::cout<<i<<std::endl;
+        //std::cout<<i<<std::endl;
+        //cloud_result1 = data[i-1];
+        //cloud_result2 = data[i];
+        //showCloud(cloud_result1, cloud_result2);
 
         source = data[i-1];
         target = data[i];
@@ -195,8 +245,9 @@ int main (int argc, char** argv) {
         pairAlign (source, target, temp, pairTransform, true);
         pcl::transformPointCloud (*temp, *result, GlobalTransform);
         GlobalTransform = GlobalTransform * pairTransform;
-        std::string result_name = str(boost::format ("/home/vllab/Desktop/ICPResult/result%1%.pcd") % i);
+        std::string result_name = str(boost::format ("/home/vllab/Desktop/GICPResult/result%1%.pcd") % i);
         pcl::io::savePCDFile (result_name, *result, true);
+
     }
 }
 

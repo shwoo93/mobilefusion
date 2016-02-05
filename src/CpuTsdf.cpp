@@ -10,11 +10,10 @@ namespace MobileFusion {
     , mesh_count_(0) {
         tsdf_->setGridSize(3., 3., 3.);
         tsdf_->setResolution(512, 512, 512);
+        tsdf_->setIntegrateColor(true);
+        tsdf_->reset();
         tsdf_->setImageSize(512, 424);
         tsdf_->setCameraIntrinsics(540.686f, 540.686f, 256.0f, 212.0f);
-        tsdf_->setIntegrateColor(true);
-        //tsdf_->setWeightTruncationLimit(50.f);
-        tsdf_->reset();
         octree_.setMinWeight(2);
         octree_.setColorByRGB(true);
     }
@@ -26,21 +25,20 @@ namespace MobileFusion {
             const pcl::PointCloud<pcl::PointXYZRGB> &cloud,
             const pcl::PointCloud<pcl::Normal> &normals,
             const Eigen::Affine3d &trans) {
+
         tsdf_->integrateCloud(cloud, normals, trans);
     }
 
     pcl::PointCloud<pcl::PointNormal>::Ptr
         CpuTsdf::renderView(const Eigen::Affine3d &trans, int downsampleBy) {
-        pcl::PointCloud<pcl::PointNormal>::Ptr cloud (new pcl::PointCloud<pcl::PointNormal>);
-        cloud = tsdf_->renderView (trans, downsampleBy);
-        return cloud;
+
+        return tsdf_->renderView (trans, downsampleBy);
     }
 
     pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr CpuTsdf::renderColoredView(
             const Eigen::Affine3d &trans, int downsampleBy) {
-        pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr cloud (new pcl::PointCloud<pcl::PointXYZRGBNormal>);
-        cloud = tsdf_->renderColoredView (trans, 5);
-        return cloud;
+
+        return tsdf_->renderColoredView (trans, downsampleBy);
     }
 
 

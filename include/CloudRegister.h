@@ -6,10 +6,12 @@
 
 #include <pcl/filters/extract_indices.h>
 #include <pcl/filters/filter.h>
+#include <pcl/filters/uniform_sampling.h>
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
 #include <pcl/pcl_macros.h>
+#include <pcl/registration/gicp.h>
 #include <pcl/registration/icp.h>
 #include <pcl/registration/transforms.h>
 
@@ -24,6 +26,12 @@ namespace MobileFusion {
                     int voxelsize,
                     pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr& cloud_target_downsampled,
                     pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr& cloud_source_registered);
+
+            void pairAlign(
+                    const pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_src,
+                    const pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_tgt,
+                    Eigen::Matrix4f& final_transform,
+                    bool downsample = true);
 
             Eigen::Affine3d getCameraPose();
 

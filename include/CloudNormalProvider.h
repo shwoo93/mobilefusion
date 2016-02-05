@@ -10,7 +10,9 @@ namespace MobileFusion {
             CloudNormalProvider();
         public :
             static pcl::PointCloud<pcl::Normal>::Ptr computeNormal(
-                const pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud, int k_search);
+                const pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud, int k_search = 30);
+            static pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr computePointWithNormal(
+                    const pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud, int k_search = 30);
     };
 }
 

@@ -12,8 +12,6 @@ ENDIF()
 # set output directory
 SET(LIBRARY_OUTPUT_PATH ${MY_DIR}/lib)
 
-option(BUILD_TEST "Build unit test of modules" OFF)
-
 # cmake modules
 list(APPEND CMAKE_MODULE_PATH ${MY_DIR})
 
@@ -63,7 +61,7 @@ link_directories(${PCL_LIBRARY_DIRS})
 add_definitions(${PCL_DEFINITIONS})
 include_directories(${INCLUDE_DIRS})
 
-# added for gdb debugging
+# added for debugging
 SET(CMAKE_CXX_FLAGS_DEBUG "-O0")
 SET(CMAKE_C_FLAGS_DEBUG "-O0")
 
@@ -71,7 +69,7 @@ SET(CMAKE_C_FLAGS_DEBUG "-O0")
 add_executable(main main.cpp ${SOURCES})
 target_link_libraries(main ${LIBRARIES})
 
-if(BUILD_TEST)
-    add_executable(icp_test icp_test.cpp ${SOURCES})
-    target_link_libraries(icp_test ${LIBRARIES})
-endif(BUILD_TEST)
+add_executable(main2 main2.cpp ${SOURCES})
+target_link_libraries(main2 ${LIBRARIES})
+
+

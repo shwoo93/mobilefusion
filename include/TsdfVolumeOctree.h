@@ -191,13 +191,19 @@ namespace MobileFusion {
                     }
                 }
             }
+            std::cout<<"integrateCloud inside 9"<<std::endl;
             std::vector<OctreeNode::Ptr> voxels_culled;
+            std::cout<<"integrateCloud inside 10"<<std::endl;
             getFrustumCulledVoxels(trans, voxels_culled);
+            std::cout<<"integrateCloud inside 11"<<std::endl;
         #pragma omp parallel for
             for (size_t i = 0; i < voxels_culled.size(); ++i) {
-                if(voxels_culled[i] != NULL && !cloud.empty() && !normals.empty())
+                if(voxels_culled[i] != NULL && !cloud.empty()) {
+                    std::cout<<"integrateCloud inside 12"<<std::endl;
                     updateVoxel (voxels_culled[i], cloud, normals, trans_inv);
+                }
             }
+            std::cout<<"integrateCloud inside 13"<<std::endl;
             is_empty_ = false;
             return (true);
     }
@@ -208,6 +214,7 @@ namespace MobileFusion {
                 const pcl::PointCloud<PointT> &cloud,
                 const pcl::PointCloud<NormalT> &normals,
                 const Eigen::Affine3f &trans_inv) {
+
             if (voxel->hasChildren ()) {
             std::cout<<"here1"<<std::endl;
                 std::vector<OctreeNode::Ptr>& children = voxel->getChildren();

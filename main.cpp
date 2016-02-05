@@ -21,14 +21,14 @@ int main(int argc, char **argv) {
     boost::shared_ptr<MobileFusion::CloudProvider> cloud_provider(new MobileFusion::CloudProvider());
     boost::shared_ptr<MobileFusion::FusionManager> fusion_manager(new MobileFusion::FusionManager());
     boost::shared_ptr<MobileFusion::CloudRenderer> cloud_renderer(new MobileFusion::CloudRenderer("cloud"));
-    //boost::shared_ptr<MobileFusion::CloudRecorder> cloud_recorder(new MobileFusion::CloudRecorder());
+    boost::shared_ptr<MobileFusion::CloudRecorder> cloud_recorder(new MobileFusion::CloudRecorder());
 
     //Choose Kinect or PngReader in here.
     boost::shared_ptr<MobileFusion::KinectInterface> kinect_interface(new MobileFusion::Kinect());
     //boost::shared_ptr<MobileFusion::KinectInterface> kinect_interface(new MobileFusion::KinectPngReader());
 
     //kinect_interface->addFrameListener(recorder);
-    kinect_interface->addFrameListener(renderer);
+    //kinect_interface->addFrameListener(renderer);
     kinect_interface->addFrameListener(cloud_provider);
     kinect_interface->addFrameListener(fusion_manager);
 

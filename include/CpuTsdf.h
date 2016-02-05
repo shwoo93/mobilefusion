@@ -22,16 +22,22 @@ namespace MobileFusion {
     class CpuTsdf {
         public:
             CpuTsdf();
+
             ~CpuTsdf();
+
             void integrateCloud(
                     const pcl::PointCloud<pcl::PointXYZRGB> &cloud,
                     const pcl::PointCloud<pcl::Normal> &normals,
                     const Eigen::Affine3d &trans = Eigen::Affine3d::Identity());
+
             pcl::PointCloud<pcl::PointNormal>::Ptr renderView(
                     const Eigen::Affine3d &trans = Eigen::Affine3d::Identity(), int downsampleBy = 1);
+
             pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr renderColoredView(
                     const Eigen::Affine3d &trans = Eigen::Affine3d::Identity(), int downsampleBy = 1);
+
             void constructMesh();
+
         private:
             cpu_tsdf::TSDFVolumeOctree::Ptr tsdf_;
             cpu_tsdf::MarchingCubesTSDFOctree octree_;
