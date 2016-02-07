@@ -3,20 +3,7 @@
 #include "CloudNormalProvider.h"
 
 #include <boost/format.hpp>
-#include <boost/chrono.hpp>
-
 #include <pcl/PolygonMesh.h>
-#include <pcl/filters/voxel_grid.h>
-#include <pcl/filters/uniform_sampling.h>
-#include <pcl/visualization/pcl_visualizer.h>
-#include <pcl/registration/gicp.h>
-#include <pcl/registration/icp.h>
-
-#include <cpu_tsdf/marching_cubes_tsdf_octree.h>
-#include <cpu_tsdf/octree.h>
-#include <cpu_tsdf/tsdf_interface.h>
-#include <cpu_tsdf/tsdf_volume_octree.h>
-#include <eigen_extensions/eigen_extensions.h>
 
 namespace MobileFusion {
     FusionManager::FusionManager()
@@ -42,7 +29,7 @@ namespace MobileFusion {
 
         if(update_count_ == 0) {
             //initialize tsdf_volume
-            tsdf_wrapper_.setGridSize(4., 4., 4.);
+            tsdf_wrapper_.setGridSize(3., 3., 3.);
             tsdf_wrapper_.setResolution(512, 512, 512);
             tsdf_wrapper_.setIntegrateColor(true);
             tsdf_wrapper_.reset();
