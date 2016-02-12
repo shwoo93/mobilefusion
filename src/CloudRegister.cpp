@@ -31,6 +31,8 @@ namespace MobileFusion {
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr src (new pcl::PointCloud<pcl::PointXYZRGB>);
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr tgt (new pcl::PointCloud<pcl::PointXYZRGB>);
 
+        //TODO: should handle pcl version problem first
+        /*
         //pcl::VoxelGrid<pcl::PointXYZRGB> grid;
         pcl::UniformSampling<pcl::PointXYZRGB> uniform_sampling;
 
@@ -54,6 +56,10 @@ namespace MobileFusion {
             src = cloud_src;
             tgt = cloud_tgt;
         }
+        */
+
+        src = cloud_src;
+        tgt = cloud_tgt;
 
         std::cout << "Number of sampled cloud source : " << src->size() << std::endl;
         std::cout << "Number of sampled cloud target : " << tgt->size() << std::endl;
