@@ -160,7 +160,6 @@ namespace MobileFusion {
                 const pcl::PointCloud<NormalT> &normals,
                 const Eigen::Affine3d &trans) {
             Eigen::Affine3f trans_inv = trans.inverse().cast<float> ();
-
             int px_step = 1;
             int nsplit = 0;
             for (size_t u = 0; u < cloud.width; u+= px_step) {
@@ -199,7 +198,9 @@ namespace MobileFusion {
         #pragma omp parallel for
             for (size_t i = 0; i < voxels_culled.size(); ++i) {
                 if(voxels_culled[i] != NULL && !cloud.empty()) {
-                    std::cout<<"integrateCloud inside 12"<<std::endl;
+                    std::cout<<voxels_culled.size()<<std::endl;
+                    std::cout<<" integrateCloud inside 12 "<<std::endl;
+                    std::cout<<" number of iteration "<< i <<std::endl;
                     updateVoxel (voxels_culled[i], cloud, normals, trans_inv);
                 }
             }
@@ -216,23 +217,20 @@ namespace MobileFusion {
                 const Eigen::Affine3f &trans_inv) {
 
             if (voxel->hasChildren ()) {
-            std::cout<<"here1"<<std::endl;
                 std::vector<OctreeNode::Ptr>& children = voxel->getChildren();
-            std::cout<<"here2"<<std::endl;
                 std::vector<bool> is_empty (children.size());
-            std::cout<<"here3"<<std::endl;
                 for (size_t i = 0; i < children.size(); i++) {
                     if (children[i] != NULL) {
+                    static int depth = 1;
+                    std::cout<<depth<<std::endl;
                     is_empty[i] = updateVoxel (children[i], cloud, normals, trans_inv) < 0;
+                    depth++;
                 }
                 }
-            std::cout<<"here4"<<std::endl;
                 bool all_are_empty = true;
-            std::cout<<"here5"<<std::endl;
                 for (size_t i = 0; i < is_empty.size(); i++)
                     all_are_empty &= is_empty[i];
                 if (all_are_empty) {
-            std::cout<<"here6"<<std::endl;
                     children.clear ();
                 }
                 else {
@@ -241,9 +239,7 @@ namespace MobileFusion {
             }
 
             pcl::PointXYZ v_g_orig;
-            std::cout<<"here7"<<std::endl;
             voxel->getCenter (v_g_orig.x, v_g_orig.y, v_g_orig.z);
-            std::cout<<"here8"<<std::endl;
             pcl::PointXYZ v_g = pcl::transformPoint (v_g_orig, trans_inv);
             std::cout<<"here9"<<std::endl;
             if (v_g.z < min_sensor_dist_ || v_g.z > max_sensor_dist_)
@@ -253,9 +249,10 @@ namespace MobileFusion {
             std::cout<<"here10"<<std::endl;
                 return (0);}
             const PointT &pt = cloud (u,v);
-            std::cout<<"here11"<<std::endl;
-            if (pcl_isnan (pt.z))
+            if (pcl_isnan (pt.z)){
+                std::cout<<"here11"<<std::endl;
                 return (0);
+            }
             float d;
             float w;
             std::cout<<"here12"<<std::endl;

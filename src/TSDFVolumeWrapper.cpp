@@ -50,6 +50,11 @@ namespace MobileFusion {
                                            principal_point_y);
     }
 
+    pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr
+        TSDFVolumeWrapper::renderColoredView(const Eigen::Affine3d& trans, int downsampleBy) {
+            return tsdf_volume_->renderColoredView(trans, downsampleBy);
+        }
+
     void TSDFVolumeWrapper::setMinWeight (float w_min) {
         mc_.setMinWeight (w_min);
     }

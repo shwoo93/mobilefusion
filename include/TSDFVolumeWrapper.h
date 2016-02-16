@@ -45,6 +45,10 @@ namespace MobileFusion {
                                       const double principal_point_x,
                                       const double principal_point_y);
 
+            pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr
+                renderColoredView (const Eigen::Affine3d& trans = Eigen::Affine3d::Identity(),
+                                   int downsampleBy = 1);
+
             void setMinWeight (float w_min);
 
             void setColorByRGB (bool color_by_rgb);

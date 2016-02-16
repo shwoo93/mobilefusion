@@ -9,6 +9,8 @@
 #include "KinectFrameListener.h"
 #include "TSDFVolumeWrapper.h"
 
+#include "TsdfVolumeOctree.h"
+
 namespace MobileFusion {
     class FusionManager : public KinectFrameListener, public CloudListener {
         public:
@@ -19,13 +21,13 @@ namespace MobileFusion {
             void onCloudFrame(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud);
 
         private:
-            CloudCompareRenderer renderer_;
+            //CloudCompareRenderer renderer_;
             CloudRegister registerer_;
             TSDFVolumeWrapper tsdf_wrapper_;
             bool cloud_dirty_;
             int update_count_;
             pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud_;
-            //TSDFVolumeOctree octree_;
+            TSDFVolumeOctree octree_;
     };
 }
 #endif
