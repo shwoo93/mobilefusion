@@ -23,11 +23,6 @@ namespace MobileFusion {
         std::cout << "Number of cloud source : " << cloud_src->size() <<std::endl;
         std::cout << "Number of cloud target : " << cloud_tgt->size() <<std::endl;
 
-        //remove NaNpoint
-        std::vector<int> indices;
-        pcl::removeNaNFromPointCloud (*cloud_src, *cloud_src, indices);
-        pcl::removeNaNFromPointCloud (*cloud_tgt, *cloud_tgt, indices);
-
         pcl::PointCloud<pcl::PointXYZRGBNormal>::Ptr src (new pcl::PointCloud<pcl::PointXYZRGBNormal>);
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr tgt (new pcl::PointCloud<pcl::PointXYZRGB>);
 
@@ -84,11 +79,6 @@ namespace MobileFusion {
 
         std::cout << "Number of cloud source : " << cloud_src->size() << std::endl;
         std::cout << "Number of cloud target : " << cloud_tgt->size() << std::endl;
-
-        //remove NaNpoint
-        //std::vector<int> indices;
-        //pcl::removeNaNFromPointCloud (*cloud_src, *cloud_src, indices);
-        //pcl::removeNaNFromPointCloud (*cloud_tgt, *cloud_tgt, indices);
 
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr src (new pcl::PointCloud<pcl::PointXYZRGB>);
         pcl::PointCloud<pcl::PointXYZRGB>::Ptr tgt (new pcl::PointCloud<pcl::PointXYZRGB>);
