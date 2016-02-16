@@ -6,8 +6,9 @@
 #include <pcl/PolygonMesh.h>
 
 namespace MobileFusion {
-    FusionManager::FusionManager()
-    : registerer_()
+    FusionManager::FusionManager(std::string folder_path)
+    : folder_path_(folder_path)
+    , registerer_()
     , tsdf_wrapper_()
     , cloud_dirty_(false)
     , cloud_()
@@ -129,7 +130,7 @@ namespace MobileFusion {
             tsdf_wrapper_.setInputTSDF ();
             pcl::PolygonMesh mesh;
             tsdf_wrapper_.reconstruct (mesh);
-            std::string mesh_name = str(boost::format("/home/vllab/Desktop/mesh_ftf/test%1%") % update_count_);
+            std::string mesh_name = folder_path_ + str(boost::format("test%1%") % update_count_);
             pcl::io::savePolygonFilePLY(mesh_name, mesh);
         }
 

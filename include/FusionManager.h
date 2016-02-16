@@ -14,13 +14,14 @@
 namespace MobileFusion {
     class FusionManager : public KinectFrameListener, public CloudListener {
         public:
-            FusionManager();
+            FusionManager(std::string folder_path);
             ~FusionManager();
             void update();
             void onFrame(const cv::Mat &rgb, const cv::Mat &depth);
             void onCloudFrame(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud);
 
         private:
+            std::string folder_path_;
             //CloudCompareRenderer renderer_;
             CloudRegister registerer_;
             TSDFVolumeWrapper tsdf_wrapper_;
