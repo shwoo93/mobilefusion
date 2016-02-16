@@ -6,8 +6,7 @@
 
 #include <pcl/filters/extract_indices.h>
 #include <pcl/filters/filter.h>
-//TODO: should handle pcl version problem first
-//#include <pcl/filters/uniform_sampling.h>
+#include <pcl/filters/uniform_sampling.h>
 #include <pcl/filters/voxel_grid.h>
 #include <pcl/point_cloud.h>
 #include <pcl/point_types.h>
