@@ -13,6 +13,7 @@ namespace MobileFusion {
         public:
             CloudProvider();
             ~CloudProvider();
+            void setDense(bool dense);
             void onFrame(const cv::Mat& rgb, const cv::Mat& depth);
             void addListener(boost::shared_ptr<CloudListener> cloud_listener);
 
@@ -24,6 +25,7 @@ namespace MobileFusion {
             float cy_;
             float fx_;
             float fy_;
+            bool dense_;
             std::vector<boost::shared_ptr<CloudListener> > cloud_listeners_;
     };
 }
