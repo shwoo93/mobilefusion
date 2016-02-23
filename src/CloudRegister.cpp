@@ -156,7 +156,7 @@ namespace MobileFusion {
         source_cloud_ = cloud;
     }
 
-    void CloudRegister::getSourceCloud (pcl::PointCloud<pcl::PointXYZRGB>::Ptr& cloud) const {
+    void CloudRegister::getSourceCloud (pcl::PointCloud<pcl::PointXYZRGB>::Ptr& cloud) const{
         cloud = source_cloud_;
     }
 

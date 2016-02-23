@@ -43,7 +43,6 @@ namespace MobileFusion {
             //new frame aligns with previous frame
             void setTargetCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud);
             void getTargetCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr& cloud) const;
-
             void setSourceCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud);
             void getSourceCloud(pcl::PointCloud<pcl::PointXYZRGB>::Ptr& cloud) const;
 
