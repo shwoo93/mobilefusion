@@ -19,7 +19,7 @@ list(APPEND CMAKE_MODULE_PATH ${MY_DIR})
 
 # dependencies
 find_package(OpenCV REQUIRED)
-find_package(PCL 1.7 REQUIRED)
+find_package(PCL 1.8 REQUIRED)
 find_package(freenect2 REQUIRED)
 find_package(CPUTSDF REQUIRED)
 find_package(X11 REQUIRED)

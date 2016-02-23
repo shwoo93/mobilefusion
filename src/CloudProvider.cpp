@@ -56,7 +56,7 @@ namespace MobileFusion{
 	                    point.z = depth.at<float>(j, i) * 0.001f;
 	                }
 	                point.x = (static_cast<float>(i) - cx_) * point.z / fx_;
-	                point.y = (static_cast<float>(j) - cy_) * point.z / fy_;
+	                point.y = -(static_cast<float>(j) - cy_) * point.z / fy_;
 
 	                cv::Vec3b v(rgb.at<cv::Vec3b>(j, i));
 	                point.b = v[0];
@@ -93,7 +93,7 @@ namespace MobileFusion{
 	                }
 
 	                pt.x = (static_cast<float>(w) - cx_) * pt.z / fx_;
-	                pt.y = (static_cast<float>(h) - cy_) * pt.z / fy_;
+	                pt.y = -(static_cast<float>(h) - cy_) * pt.z / fy_;
 
 	                cv::Vec3b v(rgb.at<cv::Vec3b>(h, w));
 	                pt.b = v[0];

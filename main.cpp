@@ -16,12 +16,16 @@
 int main(int argc, char **argv) {
     XInitThreads();
 
-    //boost::shared_ptr<MobileFusion::KinectRecorder> recorder(new MobileFusion::KinectRecorder());
+    //boost::shared_ptr<MobileFusion::KinectRecorder> recorder(
+    //    new MobileFusion::KinectRecorder("/home/vllab/Desktop/images/rgb/",
+    //                                     "/home/vllab/Desktop/images/depth/"));
     boost::shared_ptr<MobileFusion::KinectRenderer> renderer(new MobileFusion::KinectRenderer());
     boost::shared_ptr<MobileFusion::CloudProvider> cloud_provider(new MobileFusion::CloudProvider());
-    boost::shared_ptr<MobileFusion::FusionManager> fusion_manager(new MobileFusion::FusionManager());
+    boost::shared_ptr<MobileFusion::FusionManager> fusion_manager(
+        new MobileFusion::FusionManager("/home/vllab/Desktop/mesh_ftf/"));
     boost::shared_ptr<MobileFusion::CloudRenderer> cloud_renderer(new MobileFusion::CloudRenderer("cloud"));
-    boost::shared_ptr<MobileFusion::CloudRecorder> cloud_recorder(new MobileFusion::CloudRecorder());
+    //boost::shared_ptr<MobileFusion::CloudRecorder> cloud_recorder(
+    //    new MobileFusion::CloudRecorder("/home/vllab/Desktop/PCDfiles/"));
 
     //Choose Kinect or PngReader in here.
     boost::shared_ptr<MobileFusion::KinectInterface> kinect_interface(new MobileFusion::Kinect());

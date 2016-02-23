@@ -9,8 +9,9 @@
 #include <pcl/io/pcd_io.h>
 
 namespace MobileFusion{
-    CloudRecorder::CloudRecorder()
-    : frame_count_(0)
+    CloudRecorder::CloudRecorder(std::string folder_path)
+    : folder_path_(folder_path)
+    , frame_count_(0)
     , min_(0)
     , max_(std::numeric_limits<int>::max()) {
     }
@@ -29,12 +30,12 @@ namespace MobileFusion{
     void CloudRecorder::onCloudFrame(pcl::PointCloud<pcl::PointXYZRGB>::Ptr cloud) {
         if(frame_count_ >= min_ && frame_count_ <= max_) {
             struct stat st;
-            if(stat("/home/vllab/Desktop/PCDfiles/", &st) != 0) {
-                std::cerr << "folder missing: /home/vllab/Desktop/PCDfiles/" << std::endl;
+            if(stat(folder_path_.c_str(), &st) != 0) {
+                std::cerr << std::string("folder missing: ") + folder_path_ << std::endl;
                 assert(0);
             }
             
-            std::string cloud_name = str(boost::format ("/home/vllab/Desktop/PCDfiles/cloud%1%.pcd") % frame_count_);
+            std::string cloud_name = folder_path_ + str(boost::format ("cloud%1%.pcd") % frame_count_);
             pcl::io::savePCDFile(cloud_name, *cloud);
         }
 
